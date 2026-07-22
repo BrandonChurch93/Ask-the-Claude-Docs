@@ -1,0 +1,36 @@
+/*
+ * Design tokens — the §2.1 palette, frozen as values (design-system.md §2.1).
+ * Ships the four §2.4 corrections to the v10 mock: --ink-muted is #726C59
+ * (darkened for contrast), semantic lines use --line-graphic (the mock's
+ * --line-strong is retired), no opacity is ever applied to text, and fonts are
+ * self-hosted (app/fonts.ts). Contrast ratios for every pair are recorded in
+ * design-system.md §2.2 (DS-02 / A11Y-17).
+ *
+ * Light-only, dark-ready (DS principle 4): a dark theme is a future token swap,
+ * not a rewrite. No color outside this file appears in the UI (DS-05).
+ */
+:root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --paper: #faf7f0; /* page background */
+  --paper-raised: #f4f0e6; /* receipt head hover, rail rows, misses accents */
+  --card: #fffefa; /* sources module, rail box, popovers, ask bar */
+
+  /* Ink (text). No opacity applied to text, ever (§2.4 correction 3). */
+  --ink: #211f1a; /* primary text */
+  --ink-soft: #59543f; /* secondary text; also the "excluded" text color */
+  --ink-muted: #726c59; /* labels, captions, scores, meta (was #857F6E) */
+
+  /* Accent (scarce: markers, links, receipt keys, Ask fill, focus ring) */
+  --accent: #99512a;
+  --accent-deep: #7f421f; /* accent hover/active */
+  --accent-wash: rgba(153, 81, 42, 0.1); /* hover/highlight wash */
+
+  /* Lines */
+  --line: #e7e2d5; /* decorative hairlines only (DS-04) */
+  --line-graphic: #857f6e; /* meaning-bearing lines: threshold rule, ask border, nav divider */
+
+  /* Status */
+  --ok: #1d9e75; /* sync status dot only (DS-03) */
+}

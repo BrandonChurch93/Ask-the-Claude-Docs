@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { serif, sans, mono } from "./fonts";
 import "./globals.css";
 
 // Placeholder metadata; the full Metadata API pass (title template, OG/Twitter,
@@ -12,8 +13,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Font variables (--serif / --sans / --mono) are set on <html> so the whole
+  // document can reference the three voices (DS §3.3, DS-08).
   return (
-    <html lang="en">
+    <html lang="en" className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
       <body>{children}</body>
     </html>
   );

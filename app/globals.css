@@ -1,8 +1,22 @@
 /*
- * Minimal reset only. Design tokens, fonts, focus style, and base typography
- * roles are defined in app/tokens.css + this file's base layer at P1.3
- * (design-system.md §2-5, §8). Light-only per DS principle 4 — no dark styling.
+ * Global base layer (design-system.md §2-5, §8; accessibility.md §6).
+ * Order: tokens (palette) → reset → font voices → base typography → focus.
+ * Component-specific type roles (§3.2) live in each component's *.module.css
+ * per the CSS-Modules decision (ENG §2); this file establishes only the
+ * foundational voices and the interface (sans) default.
+ *
+ * Light-only per DS principle 4 — no dark styling ships in v1.
  */
+@import './tokens.css';
+
+/* --- Font voices: next/font variables (app/fonts.ts) + §3.1 fallback stacks --- */
+:root {
+  --font-serif: var(--serif), Georgia, serif; /* answer voice */
+  --font-sans: var(--sans), system-ui, sans-serif; /* interface voice */
+  --font-mono: var(--mono), ui-monospace, monospace; /* instrument voice */
+}
+
+/* --- Reset --- */
 *,
 *::before,
 *::after {
@@ -12,4 +26,32 @@
 * {
   margin: 0;
   padding: 0;
+}
+
+/* --- Base typography: the interface (sans) voice is the document default --- */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 15px; /* UI body role, §3.2 */
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--paper);
+  font-synthesis: none;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--accent-wash);
+}
+
+/* --- Focus: 2px accent ring, 2px offset, never removed (DS §5, A11Y-07).
+   :focus-visible so the ring shows for keyboard users without firing on
+   pointer clicks; keyboard focus is always visible, satisfying 2.4.11/2.4.7. */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
