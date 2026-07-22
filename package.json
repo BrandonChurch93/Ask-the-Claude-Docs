@@ -20,5 +20,9 @@
     "eslint": "9.39.5",
     "eslint-config-next": "16.2.11",
     "typescript": "5.9.3"
+  },
+  "overrides": {
+    "sharp": "0.35.3",
+    "postcss": "8.5.22"
   }
 }
