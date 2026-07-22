@@ -20,13 +20,13 @@ The master execution document for Ask the Claude Docs v1. Execute in order. This
 
 ## Phase 0 · Preflight (Brandon's wiring, verified)
 
-**P0.1 🔶 BRANDON · Accounts and keys** `[ ]`
+**P0.1 🔶 BRANDON · Accounts and keys** `[x]`
 reads: `.claude/docs/security.md` §1
 Brandon supplies, into `.env.local` (never committed): `ANTHROPIC_API_KEY` (funded), `OPENAI_API_KEY` (embeddings; new key if needed), Supabase project → pooled `DATABASE_URL`, Upstash Redis → `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN`, and the portfolio URL (for UX-13, used in P5.8).
 Self-audit: SEC-01 posture (file untracked), every variable present and non-placeholder.
 🔍 Brandon review: confirm four services exist and keys pasted; nothing else to check.
 
-**P0.2 🔶 BRANDON · Repo and reference artifact** `[ ]`
+**P0.2 🔶 BRANDON · Repo and reference artifact** `[x]`
 reads: `.claude/docs/design-system.md` §0
 Brandon: the GitHub repo exists (it does); place `layout-mock-v10.html` at `.claude/design/layout-mock-v10.html`; confirm `.claude/docs/` contains all twelve docs and root `CLAUDE.md`.
 Self-audit: DS-01 (mock present at exact path), doc inventory matches CLAUDE.md's table.
@@ -36,7 +36,7 @@ Self-audit: DS-01 (mock present at exact path), doc inventory matches CLAUDE.md'
 
 ## Phase 1 · Scaffold and standards
 
-**P1.1 · Scaffold Next.js 16** `[ ]`
+**P1.1 · Scaffold Next.js 16** `[x]`
 reads: `.claude/docs/engineering-standards.md` §1–3, §6 · `/CLAUDE.md`
 `create-next-app` per ENG stack (TS strict, App Router, no Tailwind); prune to the ENG §3 structure; pin versions; commit lockfile. Record exact versions in the log.
 Self-audit: ENG-01, ENG-04, ENG-05; `npm ci && npx tsc --noEmit` clean.
@@ -317,3 +317,7 @@ README assembles the accreted decision log, usage guidance including what it dec
 ## Build log
 
 *(append one line per completed step: `{step} · {date} · {outcome} · {Tier 2 decisions}`)*
+
+P0.1 · 2026-07-22 · Four services keyed into untracked .env.local; all 6 vars present, non-placeholder, shapes verified (no values printed); SEC-01/02 posture green · Tier 2: portfolio URL stored as PORTFOLIO_URL (server-only, no NEXT_PUBLIC) per Brandon.
+P0.2 · 2026-07-22 · DS-01 mock at exact path (valid HTML, renders — Brandon confirmed in browser); 12 docs + CLAUDE.md inventory matches; GitHub origin BrandonChurch93/Ask-the-Claude-Docs live · No Tier 2.
+P1.1 · 2026-07-22 · Next 16.2.11 / React 19.2.4 / react-dom 19.2.4 scaffolded (TS strict + noUncheckedIndexedAccess, App Router, Turbopack, no Tailwind, ESLint); devDeps exact-pinned (@types/node 20.19.43, @types/react 19.2.17, @types/react-dom 19.2.3, eslint 9.39.5, eslint-config-next 16.2.11, typescript 5.9.3); pruned to blank <main> boot; npm ci + tsc clean; dev boots on Turbopack 200 · Tier 2: (a) dropped scaffold AGENTS.md (competes with CLAUDE.md); (b) commit next-env.d.ts + gitignore *.tsbuildinfo (CI typecheck precedes build); (c) placeholder metadata/globals reset only, fonts+tokens deferred to P1.3. FLAG: fresh scaffold carries 2 high (sharp/libvips CVEs) + 1 moderate (postcss) transitive via next@16.2.11 — no non-breaking fix; collides with SEC-16 at P1.4, resolution likely Tier 3.

@@ -1,0 +1,15 @@
+/*
+ * Minimal reset only. Design tokens, fonts, focus style, and base typography
+ * roles are defined in app/tokens.css + this file's base layer at P1.3
+ * (design-system.md §2-5, §8). Light-only per DS principle 4 — no dark styling.
+ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
