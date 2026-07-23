@@ -91,18 +91,21 @@ Before the first baseline is accepted: run the full judged layer **3 times** aga
 
 The regression margin `M` = the larger of (observed aggregate spread) and 1 judged check. This is measured, not assumed, and it is re-measured whenever the judge prompt or judge model changes.
 
+**Recorded baseline pass-rate = the median of the 3 runs**, not any single run (a single run is a noisy draw; near the AC-03 floor the min-vs-median gap is decision-relevant). The artifact stores all 3 per-run pass rates, their spread, the per-check flip rate, and `M` alongside the median, so the noise is inspectable and the recorded number is reproducible. The per-question verdict detail is retained from the median run (or, when two runs tie the median, the first such run). *(Amended 2026-07-23 per P4.5 rule-1 authorization: the 3-run protocol determines the noise floor but did not previously say which run's aggregate is the baseline; median is the robust choice and is now the methodology.)*
+
 **Rules**
-- `EVAL-10` No judged-metric baseline exists without a recorded noise measurement attached to it.
+- `EVAL-10` No judged-metric baseline exists without a recorded noise measurement attached to it. The recorded baseline pass-rate is the median of the 3 measurement runs; the artifact stores every run's pass rate plus the spread.
 
 ## 5. Regression policy
 
 - **Retrieval (exact):** any drop in hit@5 or MRR versus baseline is a regression. CI fails the PR. No margin — these numbers are deterministic (`EVAL-05`), so any movement is real.
 - **Judged:** aggregate pass-rate drop > `M` versus baseline is a regression; drop ≤ `M` is reported as "within noise." Per-question flips are listed in the report either way.
+- **Judged re-run on a below-threshold single run:** a CI judged run that would fail (below the AC-03 floor, or a drop > `M` versus baseline) **auto-re-runs to a total of 3** and is scored on the **median** verdict — the same methodology that sets the baseline. This prevents a single judge coin-flip near the floor from producing a false red on an unchanged system; a genuine regression fails the median of 3, not one unlucky draw. The re-run is bounded (3 total) and its cost is the judged-suite cost, incurred only when the first run is below threshold. All 3 runs are reported.
 - **Baselines:** `evals/baseline.json`, updated only by an explicit, reviewed commit ("re-baseline") — never automatically. A re-baseline commit message states why.
 - A change that *improves* metrics also updates the baseline via the same explicit mechanism, so improvements are locked in and can't silently erode back.
 
 **Rules**
-- `EVAL-11` CI fails on any retrieval-metric drop and on judged drops beyond `M`.
+- `EVAL-11` CI fails on any retrieval-metric drop and on judged drops beyond `M`. A below-threshold judged run auto-re-runs to 3 and is judged on the median before failing, so the regression verdict uses the same median-of-3 methodology as the baseline.
 - `EVAL-12` Baseline updates are explicit commits, never automated side effects.
 
 ## 6. Run cadence and cost
