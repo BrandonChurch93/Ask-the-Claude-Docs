@@ -12,10 +12,12 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "check:em-dash": "node scripts/check-em-dash.mjs",
-    "check:secrets": "node scripts/check-secret-shapes.mjs"
+    "check:secrets": "node scripts/check-secret-shapes.mjs",
+    "db:migrate": "NODE_OPTIONS=--conditions=react-server tsx --env-file=.env.local scripts/db-migrate.ts"
   },
   "dependencies": {
     "next": "16.2.11",
+    "postgres": "3.4.9",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "server-only": "0.0.1",
@@ -28,6 +30,7 @@
     "eslint": "9.39.5",
     "eslint-config-next": "16.2.11",
     "prettier": "3.9.6",
+    "tsx": "4.23.1",
     "typescript": "5.9.3",
     "vitest": "4.1.10"
   },
