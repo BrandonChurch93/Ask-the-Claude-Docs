@@ -21,9 +21,9 @@ export interface ScoredChunk {
 }
 
 export interface Partition {
-  /** Chunks at or above `T` — the only chunks ever sent to the model (RAG-14). */
+  /** Chunks at or above `T`: the only chunks ever sent to the model (RAG-14). */
   contextSet: ScoredChunk[];
-  /** Chunks below `T` — returned to the client dimmed, never to the model. */
+  /** Chunks below `T`: returned to the client dimmed, never to the model. */
   nearMisses: ScoredChunk[];
   /** True when no chunk clears `T`: a server-side refusal, no generation (RAG-13). */
   refused: boolean;
