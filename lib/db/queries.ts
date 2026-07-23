@@ -1,6 +1,8 @@
 import { sql } from "./client";
 import { config } from "../config";
 import type { FetchedPage, SkippedPage } from "../rag/corpus";
+import type { Chunk } from "../rag/chunker";
+import type { PageState } from "../rag/planner";
 
 /**
  * SQL query module (ENG-03: all SQL lives in lib/db/ as tagged-template
@@ -92,10 +94,86 @@ export interface SyncRunRecord {
   error: string | null;
 }
 
+// --- Sync-diff reads (P2.4): current page and chunk identity/hash state. ---
+
+/** Page identity + hash for the page-level diff (RAG §9 steps 1-2). */
+export async function getPageStates(): Promise<PageState[]> {
+  return sql<PageState[]>`
+    select page_path as "pagePath", page_hash as "pageHash" from documents`;
+}
+
+/** Chunk identity + hash for the chunk-level diff (RAG §9 step 3). */
+export async function getChunkStates(): Promise<
+  { chunkId: string; contentHash: string; pagePath: string }[]
+> {
+  return sql<{ chunkId: string; contentHash: string; pagePath: string }[]>`
+    select chunk_id as "chunkId", content_hash as "contentHash", page_path as "pagePath"
+    from chunks`;
+}
+
+/** Insert or update a chunk with its embedding (embed at write time, RAG §5). */
+export async function upsertChunk(
+  chunk: Chunk,
+  embedding: number[],
+  updatedAt: Date,
+): Promise<void> {
+  const vector = `[${embedding.join(",")}]`;
+  await sql`
+    insert into chunks (
+      chunk_id, page_path, source, breadcrumb, heading_anchor, content,
+      content_hash, token_count, embedding, embedding_model, updated_at
+    )
+    values (
+      ${chunk.chunkId}, ${chunk.pagePath}, ${chunk.source}, ${chunk.breadcrumb},
+      ${chunk.headingAnchor}, ${chunk.content}, ${chunk.contentHash}, ${chunk.tokenCount},
+      ${vector}::vector, ${config.embedding.model}, ${updatedAt}
+    )
+    on conflict (chunk_id) do update set
+      page_path       = excluded.page_path,
+      source          = excluded.source,
+      breadcrumb      = excluded.breadcrumb,
+      heading_anchor  = excluded.heading_anchor,
+      content         = excluded.content,
+      content_hash    = excluded.content_hash,
+      token_count     = excluded.token_count,
+      embedding       = excluded.embedding,
+      embedding_model = excluded.embedding_model,
+      updated_at      = excluded.updated_at
+  `;
+}
+
+/** Delete chunks by id (re-chunk removed a section, RAG §9 step 3). */
+export async function deleteChunks(chunkIds: string[]): Promise<void> {
+  if (chunkIds.length === 0) return;
+  await sql`delete from chunks where chunk_id = any(${chunkIds})`;
+}
+
+/** Delete removed pages; the FK cascade removes their chunks (RAG §9 step 4). */
+export async function deletePages(pagePaths: string[]): Promise<void> {
+  if (pagePaths.length === 0) return;
+  await sql`delete from documents where page_path = any(${pagePaths})`;
+}
+
+// --- Coverage + freshness, derived from stored data, never hardcoded (RAG-21). ---
+
+/** The corpus coverage list (refusal-state chips), from current page titles. */
+export async function getCoverage(): Promise<
+  { pagePath: string; title: string; url: string }[]
+> {
+  return sql<{ pagePath: string; title: string; url: string }[]>`
+    select page_path as "pagePath", title, url from documents order by title`;
+}
+
+/** The freshness timestamp: most recent sync (RAG §9.5 `synced_at` max). */
+export async function getFreshness(): Promise<Date | null> {
+  const [row] = await sql<{ syncedAt: Date | null }[]>`
+    select max(synced_at) as "syncedAt" from documents`;
+  return row?.syncedAt ?? null;
+}
+
 /**
  * Write one sync-log row (RAG-22). Skips are persisted with their reasons
- * (RAG-02), never silently dropped. The full writer (chunk counts, coverage)
- * is extended in P2.4; this records the fetch phase.
+ * (RAG-02), never silently dropped.
  */
 export async function insertSyncRun(run: SyncRunRecord): Promise<void> {
   await sql`

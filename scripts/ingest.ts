@@ -1,52 +1,58 @@
+import { runIngest, type IngestDeps } from "../lib/rag/ingest";
 import { fetchCorpus } from "../lib/rag/corpus";
+import { embed } from "../lib/rag/embedder";
 import {
+  getPageStates,
+  getChunkStates,
   upsertDocument,
+  upsertChunk,
+  deleteChunks,
+  deletePages,
   insertSyncRun,
-  countDocuments,
 } from "../lib/db/queries";
 import { sql } from "../lib/db/client";
 
 /**
- * Ingestion entrypoint. P2.2 phase: discover pages from llms.txt, fetch + sniff
- * each, store raw markdown in `documents` (RAG-01/02/03), and write a sync-log
- * row recording pages fetched/skipped. Chunking + embedding are added in
- * P2.3-P2.5. Free to run (no model API calls yet).
+ * Ingestion entrypoint (rag-design.md §9). Wires the real dependencies into the
+ * injected orchestration in lib/rag/ingest.ts. `--dry-run` computes and prints
+ * the plan (which chunks would embed and why) with no writes and no API calls.
  *
- * Run: `npm run ingest`.
+ * Run: `npm run ingest` (live; spends on embeddings) or `npm run ingest -- --dry-run`.
  */
 async function main() {
-  const startedAt = new Date();
-  console.log("discovering + fetching corpus from llms.txt ...");
-  const { fetched, skipped } = await fetchCorpus();
+  const dryRun = process.argv.includes("--dry-run");
+  const deps: IngestDeps = {
+    fetchCorpus,
+    getPageStates,
+    getChunkStates,
+    embed,
+    upsertDocument,
+    upsertChunk,
+    deleteChunks,
+    deletePages,
+    insertSyncRun,
+  };
 
-  for (const page of fetched) {
-    await upsertDocument(page, startedAt);
+  const r = await runIngest(deps, { dryRun, startedAt: new Date() });
+
+  const added = r.chunksToEmbed.filter((c) => c.reason === "new").length;
+  const changed = r.chunksToEmbed.filter((c) => c.reason === "changed").length;
+  console.log(`${dryRun ? "DRY RUN (no writes, no API calls)" : "INGEST"}`);
+  console.log(
+    `pages: fetched=${r.pagesFetched} new=${r.pagesNew} changed=${r.pagesChanged} unchanged=${r.pagesUnchanged} removed=${r.pagesRemoved} skipped=${r.pagesSkipped.length}`,
+  );
+  console.log(
+    `chunks: to-embed=${r.chunksToEmbed.length} (new=${added}, changed=${changed}) unchanged=${r.chunksUnchanged} to-delete=${r.chunksToDelete.length}`,
+  );
+  console.log(`embedding API batches: ${r.embeddingCalls}`);
+
+  if (dryRun && r.chunksToEmbed.length > 0) {
+    console.log("\nsample of chunks that WOULD embed (reason -> id):");
+    for (const c of r.chunksToEmbed.slice(0, 10))
+      console.log(`  ${c.reason.padEnd(7)} ${c.chunkId}`);
+    if (r.chunksToEmbed.length > 10)
+      console.log(`  ... and ${r.chunksToEmbed.length - 10} more`);
   }
-
-  const finishedAt = new Date();
-  await insertSyncRun({
-    startedAt,
-    finishedAt,
-    durationMs: finishedAt.getTime() - startedAt.getTime(),
-    status: "success",
-    pagesFetched: fetched.length,
-    pagesSkipped: skipped,
-    chunksAdded: 0,
-    chunksUpdated: 0,
-    chunksDeleted: 0,
-    embeddingCalls: 0,
-    error: null,
-  });
-
-  console.log(`\nfetched ${fetched.length}, skipped ${skipped.length}`);
-  if (skipped.length > 0) {
-    console.log("skip log:");
-    for (const s of skipped)
-      console.log(`  ${s.pagePath}: ${s.reason} (${s.url})`);
-  } else {
-    console.log("skip log: (no non-markdown pages in the current corpus)");
-  }
-  console.log(`documents row count: ${await countDocuments()}`);
 
   await sql.end();
 }
