@@ -6,6 +6,14 @@ build
 package-lock.json
 next-env.d.ts
 
+# Machine-generated eval artifacts (JSON.stringify output, committed for /evals
+# rendering per EVAL-16; regenerated each run, so not hand-formatted). The
+# hand-authored evals/testset.json is NOT ignored.
+evals/runs/
+evals/latest.json
+evals/calibration.json
+evals/baseline.json
+
 # Binary + third-party
 *.woff2
 app/fonts/LICENSE.md

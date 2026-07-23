@@ -57,6 +57,17 @@ jobs:
         run: echo "stub step (P4.2, EVAL-06). Retrieval eval suite is wired here."
 
       - name: Build
+        # `next build` evaluates the /api/ask route to collect page data, which
+        # imports env.ts (boot-parsed, ENG-06). The build calls no APIs, so it
+        # runs on schema-valid placeholders. Real values are set on Vercel at
+        # deploy (P8.1); these are short and creds-free so SEC-01's grep stays clean.
+        env:
+          ANTHROPIC_API_KEY: sk-ci
+          OPENAI_API_KEY: sk-ci
+          DATABASE_URL: postgresql://localhost:5432/ci
+          UPSTASH_REDIS_REST_URL: https://ci.example.com
+          UPSTASH_REDIS_REST_TOKEN: ci
+          PORTFOLIO_URL: https://ci.example.com
         run: npm run build
 
       - name: Browser tests + axe
