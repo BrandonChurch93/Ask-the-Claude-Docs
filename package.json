@@ -13,7 +13,8 @@
     "test": "vitest run",
     "check:em-dash": "node scripts/check-em-dash.mjs",
     "check:secrets": "node scripts/check-secret-shapes.mjs",
-    "db:migrate": "NODE_OPTIONS=--conditions=react-server tsx --env-file=.env.local scripts/db-migrate.ts"
+    "db:migrate": "NODE_OPTIONS=--conditions=react-server tsx --env-file=.env.local scripts/db-migrate.ts",
+    "ingest": "NODE_OPTIONS=--conditions=react-server tsx --env-file=.env.local scripts/ingest.ts"
   },
   "dependencies": {
     "next": "16.2.11",

@@ -36,6 +36,15 @@ type Threshold =
     };
 
 export const config = {
+  /** Corpus source (RAG §1). Discovery starts from llms.txt; no hardcoded page
+   *  lists (RAG-01). Multi-corpus schema, single v1 source value. */
+  corpus: {
+    llmsTxtUrl: "https://code.claude.com/docs/llms.txt",
+    source: "claude-code",
+    /** Concurrent page fetches during discovery (politeness bound). */
+    fetchConcurrency: 8,
+  },
+
   /** Chunking parameters (RAG §2). Split at ## and ###; #### and deeper stay in-parent. */
   chunking: {
     /** Heading depths that begin a new chunk. `#` (page title) is metadata, not a split point. */
