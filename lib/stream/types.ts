@@ -28,12 +28,24 @@ export interface UsagePayload {
   cacheReadInputTokens: number;
 }
 
-/** Per-query timings in milliseconds (performance.now(), PERF-06). */
+/**
+ * Per-query timings in milliseconds, measured route-side with performance.now()
+ * (PERF-06). The three PERF §3 budgeted segments are `retrievalMs`, `ttftMs`,
+ * and (on a refusal) `totalMs` as the round-trip; `embedMs`/`queryMs` are the
+ * retriever's diagnostic breakdown.
+ */
 export interface Timings {
+  /** Retriever breakdown: the query-embedding API call. */
   embedMs: number;
+  /** Retriever breakdown: the pgvector search. */
   queryMs: number;
+  /** PERF §3 retrieval_ms: request validated → sources event emitted. */
   retrievalMs: number;
+  /** PERF §3 ttft_ms: request validated → first generation token. Null on a refusal. */
+  ttftMs: number | null;
+  /** First generation token → done. 0 on a refusal. */
   generationMs: number;
+  /** Request validated → done. On a refusal this is PERF §3's refusal round-trip. */
   totalMs: number;
 }
 

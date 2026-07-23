@@ -20,8 +20,9 @@ const receipt = (refused: boolean): Receipt => ({
     embedMs: 1,
     queryMs: 2,
     retrievalMs: 3,
-    generationMs: 4,
-    totalMs: 7,
+    ttftMs: refused ? null : 4,
+    generationMs: refused ? 0 : 5,
+    totalMs: refused ? 3 : 9,
   },
   usage: refused
     ? null

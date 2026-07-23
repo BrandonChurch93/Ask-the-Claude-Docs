@@ -36,8 +36,9 @@ const events: ServerEvent[] = [
         embedMs: 1,
         queryMs: 2,
         retrievalMs: 3,
-        generationMs: 4,
-        totalMs: 7,
+        ttftMs: 4,
+        generationMs: 5,
+        totalMs: 9,
       },
       usage: {
         inputTokens: 100,

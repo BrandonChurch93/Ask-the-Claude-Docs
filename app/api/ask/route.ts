@@ -117,6 +117,10 @@ export async function POST(req: Request): Promise<Response> {
         controller.enqueue(encoder.encode(encodeEvent(event)));
 
       let textStarted = false;
+      // PERF-06 / PERF §3: measure the budgeted segments route-side from the
+      // request-validated point (t0), not from the retriever's internal timer.
+      const t0 = performance.now();
+      let firstTokenAt: number | null = null;
       try {
         const outcome = await retrieve(question);
 
@@ -127,6 +131,8 @@ export async function POST(req: Request): Promise<Response> {
           refused: outcome.refused,
         };
 
+        // retrieval_ms: validated → sources emitted (measured at the emit point).
+        const retrievalMs = performance.now() - t0;
         // First event, before any generated token (RAG-16). Snippet-only (PERF-12).
         send({
           type: "sources",
@@ -137,12 +143,16 @@ export async function POST(req: Request): Promise<Response> {
 
         if (outcome.refused) {
           // RAG-13 / PERF-07: no generation call; one flush after retrieval.
+          // totalMs here is PERF §3's refusal round-trip.
           const receipt: Receipt = {
             ...skeleton,
             timings: {
-              ...outcome.timings,
+              embedMs: outcome.timings.embedMs,
+              queryMs: outcome.timings.queryMs,
+              retrievalMs,
+              ttftMs: null,
               generationMs: 0,
-              totalMs: outcome.timings.retrievalMs,
+              totalMs: performance.now() - t0,
             },
             usage: null,
             costUsd: 0,
@@ -152,19 +162,21 @@ export async function POST(req: Request): Promise<Response> {
           return;
         }
 
-        const genStart = performance.now();
         const gen = streamAnswer(question, outcome.contextSet);
         for await (const ev of gen) {
           if (
             ev.type === "content_block_delta" &&
             ev.delta.type === "text_delta"
           ) {
+            if (firstTokenAt === null) firstTokenAt = performance.now(); // ttft
             textStarted = true;
             send({ type: "text", delta: ev.delta.text }); // PERF-08: no buffering
           }
         }
         const final = await gen.finalMessage();
-        const generationMs = performance.now() - genStart;
+        const doneAt = performance.now();
+        const ttftMs = firstTokenAt !== null ? firstTokenAt - t0 : null;
+        const generationMs = firstTokenAt !== null ? doneAt - firstTokenAt : 0;
 
         const usage: UsagePayload | null = final.usage
           ? {
@@ -179,9 +191,12 @@ export async function POST(req: Request): Promise<Response> {
         const receipt: Receipt = {
           ...skeleton,
           timings: {
-            ...outcome.timings,
+            embedMs: outcome.timings.embedMs,
+            queryMs: outcome.timings.queryMs,
+            retrievalMs,
+            ttftMs,
             generationMs,
-            totalMs: outcome.timings.retrievalMs + generationMs,
+            totalMs: doneAt - t0,
           },
           usage,
           costUsd: computeCostUsd(skeleton.model, final.usage ?? null),

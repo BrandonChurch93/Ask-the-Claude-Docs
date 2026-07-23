@@ -137,6 +137,10 @@ describe("POST /api/ask (P3.3)", () => {
       cacheReadInputTokens: 0,
     });
     expect(done.receipt.refused).toBe(false);
+    // PERF-06: route-measured segments present; ttft is a number on an answer.
+    expect(typeof done.receipt.timings.ttftMs).toBe("number");
+    expect(done.receipt.timings.retrievalMs).toBeGreaterThanOrEqual(0);
+    expect(done.receipt.timings.totalMs).toBeGreaterThanOrEqual(0);
   });
 
   it("refusal makes zero generation calls and flushes sources then done (RAG-13, PERF-07)", async () => {
@@ -160,6 +164,7 @@ describe("POST /api/ask (P3.3)", () => {
     expect(done.receipt.refused).toBe(true);
     expect(done.receipt.usage).toBeNull();
     expect(done.receipt.costUsd).toBe(0);
+    expect(done.receipt.timings.ttftMs).toBeNull(); // no generation, no ttft
     const sources = events[0] as SourcesEvent;
     expect(sources.sources).toEqual([]);
     expect(sources.nearMisses.map((s) => s.chunkId)).toEqual(["x"]);
