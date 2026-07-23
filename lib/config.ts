@@ -55,6 +55,13 @@ export const config = {
     maxTokens: 800,
     /** Below this, a section is merged with a sibling. */
     minTokens: 120,
+    /** The embedding model's hard input cap (text-embedding-3-small). An atomic
+     *  unit exceeding this is un-embeddable, so it triggers the oversize-atomic
+     *  exception (RAG §2): split at natural boundaries into self-describing
+     *  segments. */
+    embeddingLimitTokens: 8191,
+    /** Segment size for the oversize-atomic split; margin below the cap. */
+    oversizeSegmentTokens: 7000,
   },
 
   /** Embedding model + batching (RAG §5). Default parameters, no dimension truncation. */
