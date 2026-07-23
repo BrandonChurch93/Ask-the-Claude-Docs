@@ -5,7 +5,7 @@
  * sanctioned placeholder file .env.example is excluded; real secrets live only
  * in untracked .env.local / platform env config.
  *
- * Never prints the matched value (SEC-02) — only the file and which pattern hit.
+ * Never prints the matched value (SEC-02); only the file and which pattern hit.
  */
 import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
@@ -22,7 +22,11 @@ const EXCLUDE = [
   /(^|\/)package-lock\.json$/,
 ];
 
-const files = execSync("git ls-files", { encoding: "utf8" })
+// --cached --others --exclude-standard = tracked plus new (non-ignored) files,
+// so a secret is caught before it is committed, not only after.
+const files = execSync("git ls-files --cached --others --exclude-standard", {
+  encoding: "utf8",
+})
   .split("\n")
   .filter(Boolean)
   .filter((f) => !EXCLUDE.some((re) => re.test(f)));

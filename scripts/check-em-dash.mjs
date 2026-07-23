@@ -20,7 +20,11 @@ const EXCLUDE = [
   /(^|\/)package-lock\.json$/,
 ];
 
-const files = execSync("git ls-files", { encoding: "utf8" })
+// --cached --others --exclude-standard = tracked plus new (non-ignored) files,
+// so a file is checked before it is committed, not only after.
+const files = execSync("git ls-files --cached --others --exclude-standard", {
+  encoding: "utf8",
+})
   .split("\n")
   .filter(Boolean)
   .filter((f) => !EXCLUDE.some((re) => re.test(f)));
