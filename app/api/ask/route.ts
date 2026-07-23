@@ -113,8 +113,26 @@ export async function POST(req: Request): Promise<Response> {
   const encoder = new TextEncoder();
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
-      const send = (event: ServerEvent) =>
-        controller.enqueue(encoder.encode(encodeEvent(event)));
+      // Enqueue throws once the client disconnects (nowhere left to send). That
+      // is NOT fatal: swallow it and keep running server-side so cost accounting
+      // still completes (SEC-10: a mid-stream disconnect must not skip the spend
+      // counter). We drain the model stream to completion (variant A); aborting
+      // generation on disconnect to save the unseen tail is a possible post-v1
+      // refinement (variant B).
+      const send = (event: ServerEvent) => {
+        try {
+          controller.enqueue(encoder.encode(encodeEvent(event)));
+        } catch {
+          // client gone; continue server-side
+        }
+      };
+      const closeStream = () => {
+        try {
+          controller.close();
+        } catch {
+          // already closed/errored (client gone)
+        }
+      };
 
       let textStarted = false;
       // PERF-06 / PERF §3: measure the budgeted segments route-side from the
@@ -158,7 +176,7 @@ export async function POST(req: Request): Promise<Response> {
             costUsd: 0,
           };
           send({ type: "done", receipt });
-          controller.close();
+          closeStream();
           return;
         }
 
@@ -177,6 +195,21 @@ export async function POST(req: Request): Promise<Response> {
         const doneAt = performance.now();
         const ttftMs = firstTokenAt !== null ? firstTokenAt - t0 : null;
         const generationMs = firstTokenAt !== null ? doneAt - firstTokenAt : 0;
+        const costUsd = computeCostUsd(skeleton.model, final.usage ?? null);
+
+        // SEC-10: accumulate the real cost the moment usage resolves, BEFORE the
+        // final client-facing send, so a client that has already disconnected
+        // cannot cause this to be skipped. Best-effort (the spend already
+        // happened; writability was proven at the pre-generation check), loud on
+        // failure.
+        try {
+          await recordSpend(costUsd);
+        } catch (err) {
+          console.error(
+            "spend accumulation write failed:",
+            err instanceof Error ? err.message : "unknown error",
+          );
+        }
 
         const usage: UsagePayload | null = final.usage
           ? {
@@ -199,21 +232,10 @@ export async function POST(req: Request): Promise<Response> {
             totalMs: doneAt - t0,
           },
           usage,
-          costUsd: computeCostUsd(skeleton.model, final.usage ?? null),
+          costUsd,
         };
         send({ type: "done", receipt });
-        // SEC-10: accumulate this request's real cost into the daily counter.
-        // Best-effort (the spend already happened; writability was proven at the
-        // pre-generation check) and loud on failure.
-        try {
-          await recordSpend(receipt.costUsd);
-        } catch (err) {
-          console.error(
-            "spend accumulation write failed:",
-            err instanceof Error ? err.message : "unknown error",
-          );
-        }
-        controller.close();
+        closeStream();
       } catch (err) {
         // Log length/outcome, never the question text (SEC-14) and no internals
         // to the client (SEC-02). The client renders the error state (UX §8).
@@ -228,7 +250,7 @@ export async function POST(req: Request): Promise<Response> {
             : "Something went wrong reaching the model. Your question wasn't charged. Try again.",
           retryable: true,
         });
-        controller.close();
+        closeStream();
       }
     },
   });

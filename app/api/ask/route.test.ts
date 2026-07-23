@@ -70,6 +70,24 @@ function fakeGen(deltas: string[], usage: unknown) {
   };
 }
 
+// Like fakeGen but yields with a delay between deltas, so a test can cancel the
+// response reader mid-stream (simulating a client disconnect) while generation
+// is still in flight.
+function slowGen(deltas: string[], usage: unknown) {
+  return {
+    async *[Symbol.asyncIterator]() {
+      for (const text of deltas) {
+        await new Promise((r) => setTimeout(r, 10));
+        yield {
+          type: "content_block_delta",
+          delta: { type: "text_delta", text },
+        };
+      }
+    },
+    finalMessage: async () => ({ usage }),
+  };
+}
+
 beforeEach(() => {
   retrieveMock.mockReset();
   streamAnswerMock.mockReset();
@@ -275,5 +293,31 @@ describe("POST /api/ask (P3.3)", () => {
     const res = await POST(makeReq({ question: "off corpus" }));
     await res.text();
     expect(recordSpendMock).not.toHaveBeenCalled();
+  });
+
+  it("still records spend when the client disconnects mid-stream (SEC-10 regression)", async () => {
+    retrieveMock.mockResolvedValue({
+      contextSet: [scored("a", 0.7)],
+      nearMisses: [],
+      refused: false,
+      calibrated: false,
+      threshold: null,
+      results: [],
+      timings: { embedMs: 1, queryMs: 1, retrievalMs: 2 },
+    });
+    streamAnswerMock.mockReturnValue(
+      slowGen(["a", "b", "c", "d"], { input_tokens: 100, output_tokens: 20 }),
+    );
+
+    const res = await POST(makeReq({ question: "how do hooks work" }));
+    const reader = res.body!.getReader();
+    await reader.read(); // consume the sources chunk...
+    await reader.cancel(); // ...then drop the connection mid-generation.
+
+    // The route keeps draining server-side; accounting must still complete.
+    await vi.waitFor(() => expect(recordSpendMock).toHaveBeenCalledTimes(1), {
+      timeout: 2000,
+    });
+    expect(recordSpendMock.mock.calls[0]![0]).toBeCloseTo(0.0002, 12);
   });
 });

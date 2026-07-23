@@ -147,9 +147,10 @@ export const config = {
   },
 
   /** Global daily spend cap in USD (SEC §4). Server-side counter keyed by UTC date,
-   *  checked before every generation call, fail-closed. */
+   *  checked before every generation call, fail-closed. Standing demo cap is $1/day
+   *  (Brandon, P3.G3); $5 was a leftover default. */
   spend: {
-    dailyCapUsd: 5,
+    dailyCapUsd: 1.0,
   },
 } as const;
 
