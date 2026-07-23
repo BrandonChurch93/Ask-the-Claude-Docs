@@ -1,0 +1,371 @@
+{
+  "run_id": "baseline-2026-07-23T23-10-16Z-661086",
+  "commit": "661086d6732e23f2edaaab2d7fdd524ca59d5936",
+  "baselined_at": "2026-07-23",
+  "config_snapshot": {
+    "k": 5,
+    "threshold": {
+      "status": "CALIBRATED",
+      "value": 0.35,
+      "calibratedAt": "2026-07-23",
+      "calibrationRunId": "calibration-2026-07-23T21-22-50Z-ffc726"
+    },
+    "excluded_page_patterns": [
+      "changelog",
+      "whats-new/%"
+    ],
+    "embedding_model": "text-embedding-3-small",
+    "generation_model": "claude-haiku-4-5",
+    "judge_model": "claude-sonnet-4-6"
+  },
+  "retrieval": {
+    "hit_at_5": 0.85,
+    "mrr": 0.6958333333333334,
+    "answerable_count": 20
+  },
+  "answers": {
+    "pass_rate": 0.9,
+    "pass_rate_basis": "median-of-3",
+    "median_run_index": 0,
+    "count": 20,
+    "checks": {
+      "grounded": 20,
+      "citations_valid": 20,
+      "complete": 19,
+      "no_fabrication": 19
+    },
+    "noise_margin": 0.050000000000000044,
+    "noise": {
+      "runs": 3,
+      "pass_rates": [
+        0.9,
+        0.9,
+        0.85
+      ],
+      "aggregate_spread": 0.050000000000000044,
+      "per_check_flip_rate": 0.0625,
+      "per_check_flips": 5,
+      "cells": 80,
+      "one_check": 0.05,
+      "M": 0.050000000000000044
+    },
+    "per_question": [
+      {
+        "id": "a-01",
+        "passed": true,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": true,
+          "no_fabrication": true,
+          "reasons": {}
+        },
+        "server_refused": false
+      },
+      {
+        "id": "a-02",
+        "passed": true,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": true,
+          "no_fabrication": true,
+          "reasons": {}
+        },
+        "server_refused": false
+      },
+      {
+        "id": "a-03",
+        "passed": true,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": true,
+          "no_fabrication": true,
+          "reasons": {}
+        },
+        "server_refused": false
+      },
+      {
+        "id": "a-04",
+        "passed": true,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": true,
+          "no_fabrication": true,
+          "reasons": {}
+        },
+        "server_refused": false
+      },
+      {
+        "id": "a-05",
+        "passed": true,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": true,
+          "no_fabrication": true,
+          "reasons": {}
+        },
+        "server_refused": false
+      },
+      {
+        "id": "a-06",
+        "passed": true,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": true,
+          "no_fabrication": true,
+          "reasons": {}
+        },
+        "server_refused": false
+      },
+      {
+        "id": "a-07",
+        "passed": true,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": true,
+          "no_fabrication": true,
+          "reasons": {}
+        },
+        "server_refused": false
+      },
+      {
+        "id": "a-08",
+        "passed": false,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": false,
+          "no_fabrication": true,
+          "reasons": {
+            "complete": "The sources do contain relevant information about connecting to MCP servers (CLI commands, surfaces, configuration), but the answer claims the documentation doesn't cover this and deflects entirely, failing to address what the sources actually provide."
+          }
+        },
+        "server_refused": false
+      },
+      {
+        "id": "a-09",
+        "passed": false,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": true,
+          "no_fabrication": false,
+          "reasons": {}
+        },
+        "server_refused": false
+      },
+      {
+        "id": "a-10",
+        "passed": true,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": true,
+          "no_fabrication": true,
+          "reasons": {}
+        },
+        "server_refused": false
+      },
+      {
+        "id": "a-11",
+        "passed": true,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": true,
+          "no_fabrication": true,
+          "reasons": {}
+        },
+        "server_refused": false
+      },
+      {
+        "id": "a-12",
+        "passed": true,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": true,
+          "no_fabrication": true,
+          "reasons": {}
+        },
+        "server_refused": false
+      },
+      {
+        "id": "a-13",
+        "passed": true,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": true,
+          "no_fabrication": true,
+          "reasons": {}
+        },
+        "server_refused": false
+      },
+      {
+        "id": "a-14",
+        "passed": true,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": true,
+          "no_fabrication": true,
+          "reasons": {}
+        },
+        "server_refused": false
+      },
+      {
+        "id": "a-15",
+        "passed": true,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": true,
+          "no_fabrication": true,
+          "reasons": {}
+        },
+        "server_refused": false
+      },
+      {
+        "id": "a-16",
+        "passed": true,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": true,
+          "no_fabrication": true,
+          "reasons": {}
+        },
+        "server_refused": false
+      },
+      {
+        "id": "a-17",
+        "passed": true,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": true,
+          "no_fabrication": true,
+          "reasons": {}
+        },
+        "server_refused": false
+      },
+      {
+        "id": "a-18",
+        "passed": true,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": true,
+          "no_fabrication": true,
+          "reasons": {}
+        },
+        "server_refused": false
+      },
+      {
+        "id": "a-19",
+        "passed": true,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": true,
+          "no_fabrication": true,
+          "reasons": {}
+        },
+        "server_refused": false
+      },
+      {
+        "id": "a-20",
+        "passed": true,
+        "verdict": {
+          "grounded": true,
+          "citations_valid": true,
+          "complete": true,
+          "no_fabrication": true,
+          "reasons": {}
+        },
+        "server_refused": false
+      }
+    ]
+  },
+  "refusals": {
+    "passed": 5,
+    "total": 5,
+    "per_question": [
+      {
+        "id": "r-01",
+        "category": "refusal",
+        "expected": "refuse",
+        "passed": true,
+        "declined": true,
+        "via": "sentinel"
+      },
+      {
+        "id": "r-02",
+        "category": "refusal",
+        "expected": "refuse",
+        "passed": true,
+        "declined": true,
+        "via": "sentinel"
+      },
+      {
+        "id": "r-03",
+        "category": "refusal",
+        "expected": "refuse",
+        "passed": true,
+        "declined": true,
+        "via": "sentinel"
+      },
+      {
+        "id": "r-04",
+        "category": "refusal",
+        "expected": "refuse",
+        "passed": true,
+        "declined": true,
+        "via": "sentinel"
+      },
+      {
+        "id": "r-05",
+        "category": "refusal",
+        "expected": "refuse",
+        "passed": true,
+        "declined": true,
+        "via": "sentinel"
+      }
+    ]
+  },
+  "boundary": {
+    "per_question": [
+      {
+        "id": "b-01",
+        "category": "boundary",
+        "expected": "refuse",
+        "passed": true,
+        "declined": true,
+        "via": "sentinel"
+      },
+      {
+        "id": "b-02",
+        "category": "boundary",
+        "expected": "refuse",
+        "passed": true,
+        "declined": true,
+        "via": "sentinel"
+      },
+      {
+        "id": "b-03",
+        "category": "boundary",
+        "expected": "answer",
+        "passed": true,
+        "declined": false,
+        "via": "answered"
+      }
+    ]
+  }
+}
