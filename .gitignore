@@ -23,7 +23,7 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files — secrets never committed (SEC-01); .env.example IS committed (ENG-11)
+# env files: secrets never committed (SEC-01); .env.example IS committed (ENG-11)
 .env*
 !.env.example
 

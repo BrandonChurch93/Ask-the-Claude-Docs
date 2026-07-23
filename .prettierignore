@@ -1,0 +1,21 @@
+# Generated / vendored
+node_modules
+.next
+out
+build
+package-lock.json
+next-env.d.ts
+
+# Binary + third-party
+*.woff2
+app/fonts/LICENSE.md
+
+# No prettier parser
+.env.example
+
+# GitHub Actions YAML (the `on:` key is a YAML 1.1 boolean; validated by GitHub, not prettier)
+.github
+
+# Brandon's frozen specs and operating contract (never reformat)
+.claude
+CLAUDE.md

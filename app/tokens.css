@@ -1,5 +1,5 @@
 /*
- * Design tokens — the §2.1 palette, frozen as values (design-system.md §2.1).
+ * Design tokens: the §2.1 palette, frozen as values (design-system.md §2.1).
  * Ships the four §2.4 corrections to the v10 mock: --ink-muted is #726C59
  * (darkened for contrast), semantic lines use --line-graphic (the mock's
  * --line-strong is retired), no opacity is ever applied to text, and fonts are

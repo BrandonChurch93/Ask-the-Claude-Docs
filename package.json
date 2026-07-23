@@ -6,7 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "check:em-dash": "node scripts/check-em-dash.mjs",
+    "check:secrets": "node scripts/check-secret-shapes.mjs"
   },
   "dependencies": {
     "next": "16.2.11",
@@ -21,7 +27,9 @@
     "@types/react-dom": "19.2.3",
     "eslint": "9.39.5",
     "eslint-config-next": "16.2.11",
-    "typescript": "5.9.3"
+    "prettier": "3.9.6",
+    "typescript": "5.9.3",
+    "vitest": "4.1.10"
   },
   "overrides": {
     "sharp": "0.35.3",

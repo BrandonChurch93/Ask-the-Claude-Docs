@@ -16,7 +16,10 @@ export default function RootLayout({
   // Font variables (--serif / --sans / --mono) are set on <html> so the whole
   // document can reference the three voices (DS §3.3, DS-08).
   return (
-    <html lang="en" className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
+    <html
+      lang="en"
+      className={`${serif.variable} ${sans.variable} ${mono.variable}`}
+    >
       <body>{children}</body>
     </html>
   );

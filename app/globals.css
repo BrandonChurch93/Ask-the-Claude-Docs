@@ -5,9 +5,9 @@
  * per the CSS-Modules decision (ENG §2); this file establishes only the
  * foundational voices and the interface (sans) default.
  *
- * Light-only per DS principle 4 — no dark styling ships in v1.
+ * Light-only per DS principle 4. No dark styling ships in v1.
  */
-@import './tokens.css';
+@import "./tokens.css";
 
 /* --- Font voices: next/font variables (app/fonts.ts) + §3.1 fallback stacks --- */
 :root {

@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# Least privilege (SEC-17); no job here needs write.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      # Actions pinned to commit SHAs, not tags (SEC-17).
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "20"
+          cache: npm
+
+      # --- ENG-19 pipeline order: install -> typecheck -> lint -> tests -> evals -> build -> e2e -> lighthouse.
+      # Supply-chain + secret/copy hygiene run first (fail fast); they do not reorder the stages above.
+      - name: Install (npm ci)
+        run: npm ci
+
+      - name: Audit dependencies (SEC-16)
+        run: npm audit --audit-level=high
+
+      - name: Secret-shape hygiene (SEC-01)
+        run: npm run check:secrets
+
+      - name: Em-dash hygiene (DS-14)
+        run: npm run check:em-dash
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Format check (Prettier)
+        run: npm run format:check
+
+      - name: Unit + integration tests
+        run: npm test
+
+      - name: Retrieval evals
+        run: echo "stub step (P4.2, EVAL-06). Retrieval eval suite is wired here."
+
+      - name: Build
+        run: npm run build
+
+      - name: Browser tests + axe
+        run: echo "stub step (P6.1). Playwright and axe are wired here."
+
+      - name: Lighthouse CI
+        run: echo "stub step (P6.2). Lighthouse CI budgets are wired here."

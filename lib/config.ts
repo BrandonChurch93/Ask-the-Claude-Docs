@@ -1,5 +1,5 @@
 /**
- * Central configuration — the single source of truth for every pipeline and
+ * Central configuration: the single source of truth for every pipeline and
  * product parameter (RAG-19). No pipeline parameter may appear as a literal
  * outside this file; every other module imports from here. The eval harness
  * snapshots this object into each run's output.
@@ -10,7 +10,7 @@
  *   threshold T (+ calibrated_at, calibration_run_id) · max output tokens ·
  *   rate-limit numbers · daily spend cap.
  *
- * Contains no secrets — secrets are read only through lib/env.ts. This file is
+ * Contains no secrets; secrets are read only through lib/env.ts. This file is
  * plain constants and is safe to import from any runtime context.
  */
 
@@ -23,13 +23,13 @@
  */
 type Threshold =
   | {
-      readonly status: 'UNCALIBRATED';
+      readonly status: "UNCALIBRATED";
       readonly value: null;
       readonly calibratedAt: null;
       readonly calibrationRunId: null;
     }
   | {
-      readonly status: 'CALIBRATED';
+      readonly status: "CALIBRATED";
       readonly value: number;
       readonly calibratedAt: string; // ISO-8601 date the calibration run produced T
       readonly calibrationRunId: string; // eval-run ID that produced this value
@@ -50,7 +50,7 @@ export const config = {
 
   /** Embedding model + batching (RAG §5). Default parameters, no dimension truncation. */
   embedding: {
-    model: 'text-embedding-3-small',
+    model: "text-embedding-3-small",
     /** Inputs per embedding API request during ingestion. */
     batchSize: 100,
   },
@@ -59,9 +59,9 @@ export const config = {
   retrieval: {
     /** top-k for the similarity search. */
     k: 5,
-    /** Calibrated refusal threshold — see the Threshold type. */
+    /** Calibrated refusal threshold. See the Threshold type. */
     threshold: {
-      status: 'UNCALIBRATED',
+      status: "UNCALIBRATED",
       value: null,
       calibratedAt: null,
       calibrationRunId: null,
@@ -72,9 +72,9 @@ export const config = {
    *  generation parameter (SEC-08). */
   generation: {
     /** Default model. */
-    model: 'claude-haiku-4-5',
+    model: "claude-haiku-4-5",
     /** Higher-quality model, selected only when `useHigherQualityModel` is true. */
-    higherQualityModel: 'claude-sonnet-4-6',
+    higherQualityModel: "claude-sonnet-4-6",
     /** Server-side flag selecting the higher-quality model. Never client-supplied. */
     useHigherQualityModel: false,
     /** Cap on generated tokens per answer (PERF-11 blast-radius bound). */
