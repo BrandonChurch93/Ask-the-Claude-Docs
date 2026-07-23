@@ -47,7 +47,7 @@ function makeDeps(state: {
   const mocks = {
     embed: vi.fn(async (texts: string[]) => texts.map(() => [0.1])),
     upsertDocument: vi.fn(async () => {}),
-    upsertChunk: vi.fn(async () => {}),
+    upsertChunks: vi.fn(async () => {}),
     deleteChunks: vi.fn(async () => {}),
     deletePages: vi.fn(async () => {}),
     insertSyncRun: vi.fn(async (_run: SyncRunRecord) => {}),
@@ -134,7 +134,7 @@ describe("runIngest (RAG §9)", () => {
     expect(r.dryRun).toBe(true);
     expect(r.chunksToEmbed.length).toBeGreaterThan(0); // it WOULD embed
     expect(mocks.embed).not.toHaveBeenCalled();
-    expect(mocks.upsertChunk).not.toHaveBeenCalled();
+    expect(mocks.upsertChunks).not.toHaveBeenCalled();
     expect(mocks.insertSyncRun).not.toHaveBeenCalled();
   });
 

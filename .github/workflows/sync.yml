@@ -1,0 +1,52 @@
+name: Sync corpus
+
+# Re-sync the Claude Code docs into Supabase (rag-design.md §9): daily on a
+# schedule plus manual dispatch. Unchanged docs make zero embedding calls
+# (RAG-20); a failure exits non-zero so the run is visibly red (RAG-22).
+
+on:
+  schedule:
+    - cron: "0 8 * * *" # 08:00 UTC daily
+  workflow_dispatch:
+
+# Least privilege (SEC-17): the sync writes to the database, not the repo.
+permissions:
+  contents: read
+
+# One sync at a time; never cancel a run mid-write (avoid a half-sync).
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      # Actions pinned to commit SHAs, not tags (SEC-17).
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Setup Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install (npm ci)
+        run: npm ci
+
+      # Runs tsx directly (not `npm run ingest`, which loads .env.local) with env
+      # from the step. lib/env.ts validates all six variables at boot (ENG-06);
+      # the sync uses only the three real secrets, so the Upstash + portfolio
+      # variables get non-secret placeholders. Any error exits non-zero, so the
+      # step fails and the Action goes red (RAG-22, no swallowed errors).
+      - name: Sync corpus
+        env:
+          NODE_OPTIONS: --conditions=react-server
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          UPSTASH_REDIS_REST_URL: https://placeholder.upstash.io
+          UPSTASH_REDIS_REST_TOKEN: placeholder
+          PORTFOLIO_URL: https://placeholder.example.com
+        run: npx tsx scripts/ingest.ts

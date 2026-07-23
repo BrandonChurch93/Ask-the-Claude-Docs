@@ -142,6 +142,47 @@ export async function upsertChunk(
   `;
 }
 
+/**
+ * Batched chunk upsert (P2.6 Tier 2): groups rows into multi-row INSERT ...
+ * ON CONFLICT statements to cut round-trips to the pooled connection (the first
+ * ingestion's wall-clock was dominated by ~3500 single-row upserts). Each row
+ * keeps its own `::vector` cast on the embedding.
+ */
+export async function upsertChunks(
+  rows: { chunk: Chunk; embedding: number[] }[],
+  updatedAt: Date,
+): Promise<void> {
+  for (let i = 0; i < rows.length; i += config.ingest.upsertBatchSize) {
+    const batch = rows.slice(i, i + config.ingest.upsertBatchSize);
+    const valueRows = batch.map(
+      ({ chunk, embedding }) => sql`(
+        ${chunk.chunkId}, ${chunk.pagePath}, ${chunk.source}, ${chunk.breadcrumb},
+        ${chunk.headingAnchor}, ${chunk.content}, ${chunk.contentHash}, ${chunk.tokenCount},
+        ${`[${embedding.join(",")}]`}::vector, ${config.embedding.model}, ${updatedAt}
+      )`,
+    );
+    const values = valueRows.reduce((acc, row) => sql`${acc}, ${row}`);
+    await sql`
+      insert into chunks (
+        chunk_id, page_path, source, breadcrumb, heading_anchor, content,
+        content_hash, token_count, embedding, embedding_model, updated_at
+      )
+      values ${values}
+      on conflict (chunk_id) do update set
+        page_path       = excluded.page_path,
+        source          = excluded.source,
+        breadcrumb      = excluded.breadcrumb,
+        heading_anchor  = excluded.heading_anchor,
+        content         = excluded.content,
+        content_hash    = excluded.content_hash,
+        token_count     = excluded.token_count,
+        embedding       = excluded.embedding,
+        embedding_model = excluded.embedding_model,
+        updated_at      = excluded.updated_at
+    `;
+  }
+}
+
 /** Delete chunks by id (re-chunk removed a section, RAG §9 step 3). */
 export async function deleteChunks(chunkIds: string[]): Promise<void> {
   if (chunkIds.length === 0) return;

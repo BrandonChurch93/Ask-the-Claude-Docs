@@ -24,9 +24,8 @@ export interface IngestDeps {
   getChunkStates: () => Promise<(ChunkState & { pagePath: string })[]>;
   embed: (texts: string[]) => Promise<number[][]>;
   upsertDocument: (page: FetchedPage, syncedAt: Date) => Promise<void>;
-  upsertChunk: (
-    chunk: Chunk,
-    embedding: number[],
+  upsertChunks: (
+    rows: { chunk: Chunk; embedding: number[] }[],
     updatedAt: Date,
   ) => Promise<void>;
   deleteChunks: (chunkIds: string[]) => Promise<void>;
@@ -169,9 +168,13 @@ export async function runIngest(
       embeddingCalls = Math.ceil(
         embedTargets.length / config.embedding.batchSize,
       );
-      for (let i = 0; i < embedTargets.length; i++) {
-        await deps.upsertChunk(embedTargets[i]!.chunk, vectors[i]!, startedAt);
-      }
+      await deps.upsertChunks(
+        embedTargets.map((e, i) => ({
+          chunk: e.chunk,
+          embedding: vectors[i]!,
+        })),
+        startedAt,
+      );
     }
     await deps.deleteChunks(plan.chunksToDelete);
     await deps.deletePages(removedPages);

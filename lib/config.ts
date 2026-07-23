@@ -97,6 +97,12 @@ export const config = {
     maxOutputTokens: 1024,
   },
 
+  /** Ingestion write batching. Chunk upserts are grouped into multi-row
+   *  statements to cut round-trips to the pooled connection (P2.6 Tier 2). */
+  ingest: {
+    upsertBatchSize: 100,
+  },
+
   /** Per-IP rate limits (SEC §4). Sliding window, enforced in middleware, fail-open. */
   rateLimit: {
     perMinute: 10,
