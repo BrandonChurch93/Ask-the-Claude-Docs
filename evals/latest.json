@@ -1,0 +1,775 @@
+{
+  "run_id": "2026-07-23T19-21-26Z-746e08",
+  "commit": "746e081ad85fe28a2f0e295d664c1090f5e8af89",
+  "config_snapshot": {
+    "k": 5,
+    "threshold": {
+      "status": "UNCALIBRATED",
+      "value": null,
+      "calibratedAt": null,
+      "calibrationRunId": null
+    },
+    "embedding_model": "text-embedding-3-small",
+    "generation_model": "claude-haiku-4-5"
+  },
+  "retrieval": {
+    "hit_at_5": 0.6,
+    "mrr": 0.4708333333333334,
+    "answerable_count": 20,
+    "per_question": [
+      {
+        "id": "a-01",
+        "category": "answerable",
+        "question": "What actually happens under the hood when Claude Code works on a task?",
+        "gold_chunks": ["claude-code/how-claude-code-works#the-agentic-loop"],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/how-claude-code-works#the-agentic-loop",
+            "similarity": 0.701
+          },
+          {
+            "chunk_id": "claude-code/how-claude-code-works#the-agentic-loop/models",
+            "similarity": 0.658
+          },
+          {
+            "chunk_id": "claude-code/slack#how-it-works/automatic-detection",
+            "similarity": 0.643
+          },
+          {
+            "chunk_id": "claude-code/how-claude-code-works",
+            "similarity": 0.623
+          },
+          {
+            "chunk_id": "claude-code/web-quickstart#how-sessions-run",
+            "similarity": 0.616
+          }
+        ],
+        "hit": true,
+        "first_gold_rank": 1,
+        "reciprocal_rank": 1
+      },
+      {
+        "id": "a-02",
+        "category": "answerable",
+        "question": "I just got Claude Code installed — how do I kick off my first session?",
+        "gold_chunks": [
+          "claude-code/quickstart#step-3-start-your-first-session",
+          "claude-code/quickstart#step-4-ask-your-first-question"
+        ],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/quickstart#step-3-start-your-first-session",
+            "similarity": 0.721
+          },
+          {
+            "chunk_id": "claude-code/quickstart#step-2-log-in-to-your-account",
+            "similarity": 0.665
+          },
+          {
+            "chunk_id": "claude-code/authentication#log-in-to-claude-code",
+            "similarity": 0.655
+          },
+          {
+            "chunk_id": "claude-code/desktop#start-a-session",
+            "similarity": 0.654
+          },
+          {
+            "chunk_id": "claude-code/overview#get-started-4",
+            "similarity": 0.653
+          }
+        ],
+        "hit": true,
+        "first_gold_rank": 1,
+        "reciprocal_rank": 1
+      },
+      {
+        "id": "a-03",
+        "category": "answerable",
+        "question": "How do I give Claude a set of project instructions it picks up automatically every session?",
+        "gold_chunks": [
+          "claude-code/memory#claudemd-files",
+          "claude-code/memory#claudemd-files/set-up-a-project-claudemd"
+        ],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/memory",
+            "similarity": 0.659
+          },
+          {
+            "chunk_id": "claude-code/memory#claudemd-files/set-up-a-project-claudemd",
+            "similarity": 0.623
+          },
+          {
+            "chunk_id": "claude-code/memory#troubleshoot-memory-issues/instructions-seem-lost-after-compact",
+            "similarity": 0.604
+          },
+          {
+            "chunk_id": "claude-code/prompt-library#related-resources",
+            "similarity": 0.597
+          },
+          {
+            "chunk_id": "claude-code/memory#claudemd-files/write-effective-instructions",
+            "similarity": 0.594
+          }
+        ],
+        "hit": true,
+        "first_gold_rank": 2,
+        "reciprocal_rank": 0.5
+      },
+      {
+        "id": "a-04",
+        "category": "answerable",
+        "question": "What happens to my conversation when it gets really long and runs out of room?",
+        "gold_chunks": [
+          "claude-code/context-window#when-your-context-fills-up"
+        ],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/context-window#what-survives-compaction",
+            "similarity": 0.454
+          },
+          {
+            "chunk_id": "claude-code/glossary#c/compaction",
+            "similarity": 0.452
+          },
+          {
+            "chunk_id": "claude-code/context-window#when-your-context-fills-up",
+            "similarity": 0.449
+          },
+          {
+            "chunk_id": "claude-code/errors#request-errors/error-during-compaction-conversation-too-long",
+            "similarity": 0.445
+          },
+          {
+            "chunk_id": "claude-code/best-practices#manage-your-session/manage-context-aggressively",
+            "similarity": 0.416
+          }
+        ],
+        "hit": true,
+        "first_gold_rank": 3,
+        "reciprocal_rank": 0.3333333333333333
+      },
+      {
+        "id": "a-05",
+        "category": "answerable",
+        "question": "How can I make my code formatter run automatically every time Claude edits a file?",
+        "gold_chunks": [
+          "claude-code/hooks-guide#what-you-can-automate/auto-format-code-after-edits"
+        ],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/hooks-guide#what-you-can-automate/auto-format-code-after-edits",
+            "similarity": 0.636
+          },
+          {
+            "chunk_id": "claude-code/best-practices#configure-your-environment-1",
+            "similarity": 0.567
+          },
+          {
+            "chunk_id": "claude-code/github-actions#advanced-configuration/customizing-claudes-behavior",
+            "similarity": 0.561
+          },
+          {
+            "chunk_id": "claude-code/headless#examples/add-claude-to-a-build-script",
+            "similarity": 0.549
+          },
+          {
+            "chunk_id": "claude-code/quickstart#step-5-make-your-first-code-change",
+            "similarity": 0.547
+          }
+        ],
+        "hit": true,
+        "first_gold_rank": 1,
+        "reciprocal_rank": 1
+      },
+      {
+        "id": "a-06",
+        "category": "answerable",
+        "question": "How do I set up my own custom subagent for a specific kind of task?",
+        "gold_chunks": [
+          "claude-code/sub-agents#quickstart-create-your-first-subagent",
+          "claude-code/sub-agents#configure-subagents-1"
+        ],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/sub-agents",
+            "similarity": 0.67
+          },
+          {
+            "chunk_id": "claude-code/agent-sdk/subagents#benefits-of-using-subagents/specialized-instructions-and-knowledge",
+            "similarity": 0.635
+          },
+          {
+            "chunk_id": "claude-code/glossary#s/subagent",
+            "similarity": 0.617
+          },
+          {
+            "chunk_id": "claude-code/sub-agents#work-with-subagents/understand-automatic-delegation-1",
+            "similarity": 0.605
+          },
+          {
+            "chunk_id": "claude-code/agent-sdk/subagents#overview",
+            "similarity": 0.599
+          }
+        ],
+        "hit": false,
+        "first_gold_rank": null,
+        "reciprocal_rank": 0
+      },
+      {
+        "id": "a-07",
+        "category": "answerable",
+        "question": "I keep repeating the same workflow with Claude — how do I package it up as a skill?",
+        "gold_chunks": [
+          "claude-code/skills#getting-started/create-your-first-skill"
+        ],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/best-practices#configure-your-environment/create-skills",
+            "similarity": 0.65
+          },
+          {
+            "chunk_id": "claude-code/skills",
+            "similarity": 0.624
+          },
+          {
+            "chunk_id": "claude-code/skills#configure-skills/skill-content-lifecycle",
+            "similarity": 0.621
+          },
+          {
+            "chunk_id": "claude-code/skills#bundled-skills",
+            "similarity": 0.612
+          },
+          {
+            "chunk_id": "claude-code/communications-kit#tips-and-tricks-campaign/automate-your-workflows",
+            "similarity": 0.609
+          }
+        ],
+        "hit": false,
+        "first_gold_rank": null,
+        "reciprocal_rank": 0
+      },
+      {
+        "id": "a-08",
+        "category": "answerable",
+        "question": "How do I hook Claude Code up to a remote MCP server?",
+        "gold_chunks": [
+          "claude-code/mcp#installing-mcp-servers/option-2-add-a-remote-sse-server",
+          "claude-code/mcp#installing-mcp-servers"
+        ],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/mcp-quickstart",
+            "similarity": 0.711
+          },
+          {
+            "chunk_id": "claude-code/mcp#use-claude-code-as-an-mcp-server",
+            "similarity": 0.694
+          },
+          {
+            "chunk_id": "claude-code/mcp#what-you-can-do-with-mcp",
+            "similarity": 0.688
+          },
+          {
+            "chunk_id": "claude-code/mcp",
+            "similarity": 0.682
+          },
+          {
+            "chunk_id": "claude-code/mcp-quickstart#connect-from-other-surfaces",
+            "similarity": 0.676
+          }
+        ],
+        "hit": false,
+        "first_gold_rank": null,
+        "reciprocal_rank": 0
+      },
+      {
+        "id": "a-09",
+        "category": "answerable",
+        "question": "When two settings files set the same thing to different values, which one wins?",
+        "gold_chunks": [
+          "claude-code/settings#settings-files/settings-precedence-1"
+        ],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/settings#settings-files/settings-precedence-1",
+            "similarity": 0.562
+          },
+          {
+            "chunk_id": "claude-code/settings#configuration-scopes/how-scopes-interact",
+            "similarity": 0.529
+          },
+          {
+            "chunk_id": "claude-code/settings#settings-files/settings-precedence-3",
+            "similarity": 0.527
+          },
+          {
+            "chunk_id": "claude-code/env-vars#precedence",
+            "similarity": 0.523
+          },
+          {
+            "chunk_id": "claude-code/server-managed-settings#settings-delivery/settings-precedence",
+            "similarity": 0.504
+          }
+        ],
+        "hit": true,
+        "first_gold_rank": 1,
+        "reciprocal_rank": 1
+      },
+      {
+        "id": "a-10",
+        "category": "answerable",
+        "question": "How do I make Claude lay out a plan before it starts changing my code?",
+        "gold_chunks": [
+          "claude-code/permission-modes#analyze-before-you-edit-with-plan-mode"
+        ],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/best-practices#explore-first-then-plan-then-code",
+            "similarity": 0.648
+          },
+          {
+            "chunk_id": "claude-code/large-codebases#scope-and-plan-changes-that-span-packages",
+            "similarity": 0.601
+          },
+          {
+            "chunk_id": "claude-code/how-claude-code-works#work-effectively-with-claude-code/explore-before-implementing",
+            "similarity": 0.594
+          },
+          {
+            "chunk_id": "claude-code/how-claude-code-works#work-effectively-with-claude-code/its-a-conversation",
+            "similarity": 0.589
+          },
+          {
+            "chunk_id": "claude-code/ultraplan#choose-where-to-execute",
+            "similarity": 0.583
+          }
+        ],
+        "hit": false,
+        "first_gold_rank": null,
+        "reciprocal_rank": 0
+      },
+      {
+        "id": "a-11",
+        "category": "answerable",
+        "question": "How do I change which model Claude Code runs on?",
+        "gold_chunks": [
+          "claude-code/model-config#available-models/setting-your-model-1",
+          "claude-code/model-config#available-models/model-aliases"
+        ],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/how-claude-code-works#the-agentic-loop/models",
+            "similarity": 0.666
+          },
+          {
+            "chunk_id": "claude-code/amazon-bedrock#set-up-manually/4-pin-model-versions-4",
+            "similarity": 0.621
+          },
+          {
+            "chunk_id": "claude-code/google-vertex-ai#startup-model-checks",
+            "similarity": 0.615
+          },
+          {
+            "chunk_id": "claude-code/google-vertex-ai#set-up-manually/5-pin-model-versions-1",
+            "similarity": 0.595
+          },
+          {
+            "chunk_id": "claude-code/claude-platform-on-aws#setup/3-pin-model-versions",
+            "similarity": 0.595
+          }
+        ],
+        "hit": false,
+        "first_gold_rank": null,
+        "reciprocal_rank": 0
+      },
+      {
+        "id": "a-12",
+        "category": "answerable",
+        "question": "How do I get started building an agent with the Claude Agent SDK?",
+        "gold_chunks": [
+          "claude-code/agent-sdk/quickstart#key-concepts",
+          "claude-code/agent-sdk/overview#get-started-1"
+        ],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/agent-sdk/overview#get-started-2",
+            "similarity": 0.732
+          },
+          {
+            "chunk_id": "claude-code/agent-sdk/overview#license-and-terms",
+            "similarity": 0.704
+          },
+          {
+            "chunk_id": "claude-code/agent-sdk/overview",
+            "similarity": 0.699
+          },
+          {
+            "chunk_id": "claude-code/agent-sdk/overview#compare-the-agent-sdk-to-other-claude-tools",
+            "similarity": 0.688
+          },
+          {
+            "chunk_id": "claude-code/agent-sdk/quickstart#next-steps",
+            "similarity": 0.684
+          }
+        ],
+        "hit": false,
+        "first_gold_rank": null,
+        "reciprocal_rank": 0
+      },
+      {
+        "id": "a-13",
+        "category": "answerable",
+        "question": "How do I get the Claude Code extension installed in VS Code?",
+        "gold_chunks": ["claude-code/vs-code#install-the-extension"],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/vs-code#install-the-extension",
+            "similarity": 0.81
+          },
+          {
+            "chunk_id": "claude-code/vs-code#prerequisites",
+            "similarity": 0.782
+          },
+          {
+            "chunk_id": "claude-code/vs-code",
+            "similarity": 0.759
+          },
+          {
+            "chunk_id": "claude-code/vs-code#next-steps",
+            "similarity": 0.729
+          },
+          {
+            "chunk_id": "claude-code/vs-code#vs-code-extension-vs-claude-code-cli/run-cli-in-vs-code",
+            "similarity": 0.725
+          }
+        ],
+        "hit": true,
+        "first_gold_rank": 1,
+        "reciprocal_rank": 1
+      },
+      {
+        "id": "a-14",
+        "category": "answerable",
+        "question": "How do I wire up Claude Code to run inside a GitHub Actions workflow?",
+        "gold_chunks": ["claude-code/github-actions#manual-setup"],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/github-actions#what-can-claude-do/claude-code-action",
+            "similarity": 0.719
+          },
+          {
+            "chunk_id": "claude-code/github-actions#example-use-cases",
+            "similarity": 0.707
+          },
+          {
+            "chunk_id": "claude-code/github-actions#why-use-claude-code-github-actions",
+            "similarity": 0.677
+          },
+          {
+            "chunk_id": "claude-code/github-actions#manual-setup",
+            "similarity": 0.671
+          },
+          {
+            "chunk_id": "claude-code/github-actions#troubleshooting/claude-not-responding-to-claude-commands",
+            "similarity": 0.666
+          }
+        ],
+        "hit": true,
+        "first_gold_rank": 4,
+        "reciprocal_rank": 0.25
+      },
+      {
+        "id": "a-15",
+        "category": "answerable",
+        "question": "How do I turn on the sandbox for the Bash tool?",
+        "gold_chunks": [
+          "claude-code/sandboxing#get-started",
+          "claude-code/sandboxing#configure-sandboxing"
+        ],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/sandbox-environments#sandboxed-bash-tool",
+            "similarity": 0.696
+          },
+          {
+            "chunk_id": "claude-code/sandboxing",
+            "similarity": 0.662
+          },
+          {
+            "chunk_id": "claude-code/sandboxing#get-started",
+            "similarity": 0.646
+          },
+          {
+            "chunk_id": "claude-code/sandboxing#get-started/sandbox-modes-2",
+            "similarity": 0.638
+          },
+          {
+            "chunk_id": "claude-code/sandboxing#get-started/sandbox-modes-1",
+            "similarity": 0.636
+          }
+        ],
+        "hit": true,
+        "first_gold_rank": 3,
+        "reciprocal_rank": 0.3333333333333333
+      },
+      {
+        "id": "a-16",
+        "category": "answerable",
+        "question": "How do I run Claude Code from a shell script without the interactive interface?",
+        "gold_chunks": ["claude-code/headless#basic-usage"],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/headless#basic-usage",
+            "similarity": 0.63
+          },
+          {
+            "chunk_id": "claude-code/headless",
+            "similarity": 0.622
+          },
+          {
+            "chunk_id": "claude-code/best-practices#automate-and-scale",
+            "similarity": 0.611
+          },
+          {
+            "chunk_id": "claude-code/headless#examples/add-claude-to-a-build-script",
+            "similarity": 0.611
+          },
+          {
+            "chunk_id": "claude-code/how-claude-code-works#environments-and-interfaces/interfaces",
+            "similarity": 0.603
+          }
+        ],
+        "hit": true,
+        "first_gold_rank": 1,
+        "reciprocal_rank": 1
+      },
+      {
+        "id": "a-17",
+        "category": "answerable",
+        "question": "What can I do to cut down how many tokens Claude Code burns through?",
+        "gold_chunks": ["claude-code/costs#reduce-token-usage"],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/costs#reduce-token-usage",
+            "similarity": 0.615
+          },
+          {
+            "chunk_id": "claude-code/costs#reduce-token-usage/write-specific-prompts",
+            "similarity": 0.58
+          },
+          {
+            "chunk_id": "claude-code/costs#reduce-token-usage/delegate-verbose-operations-to-subagents",
+            "similarity": 0.572
+          },
+          {
+            "chunk_id": "claude-code/costs#reduce-token-usage/move-instructions-from-claudemd-to-skills",
+            "similarity": 0.555
+          },
+          {
+            "chunk_id": "claude-code/costs#background-token-usage",
+            "similarity": 0.548
+          }
+        ],
+        "hit": true,
+        "first_gold_rank": 1,
+        "reciprocal_rank": 1
+      },
+      {
+        "id": "a-18",
+        "category": "answerable",
+        "question": "Claude made a bunch of changes I don't like — how do I roll them back?",
+        "gold_chunks": [
+          "claude-code/checkpointing#how-checkpoints-work/rewind-and-summarize",
+          "claude-code/checkpointing#common-use-cases"
+        ],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/changelog-42",
+            "similarity": 0.505
+          },
+          {
+            "chunk_id": "claude-code/changelog-3",
+            "similarity": 0.497
+          },
+          {
+            "chunk_id": "claude-code/changelog-19",
+            "similarity": 0.496
+          },
+          {
+            "chunk_id": "claude-code/changelog-243",
+            "similarity": 0.489
+          },
+          {
+            "chunk_id": "claude-code/changelog-2",
+            "similarity": 0.489
+          }
+        ],
+        "hit": false,
+        "first_gold_rank": null,
+        "reciprocal_rank": 0
+      },
+      {
+        "id": "a-19",
+        "category": "answerable",
+        "question": "How do I run Claude Code against Amazon Bedrock?",
+        "gold_chunks": [
+          "claude-code/amazon-bedrock#set-up-manually",
+          "claude-code/amazon-bedrock#prerequisites"
+        ],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/amazon-bedrock#prerequisites",
+            "similarity": 0.769
+          },
+          {
+            "chunk_id": "claude-code/amazon-bedrock#set-up-manually/3-configure-claude-code",
+            "similarity": 0.752
+          },
+          {
+            "chunk_id": "claude-code/amazon-bedrock#additional-resources",
+            "similarity": 0.748
+          },
+          {
+            "chunk_id": "claude-code/amazon-bedrock#sign-in-with-bedrock",
+            "similarity": 0.714
+          },
+          {
+            "chunk_id": "claude-code/amazon-bedrock-4",
+            "similarity": 0.706
+          }
+        ],
+        "hit": true,
+        "first_gold_rank": 1,
+        "reciprocal_rank": 1
+      },
+      {
+        "id": "a-20",
+        "category": "answerable",
+        "question": "What does it take to write my own plugin for Claude Code?",
+        "gold_chunks": [
+          "claude-code/plugins#quickstart/create-your-first-plugin-1",
+          "claude-code/plugins#quickstart"
+        ],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/plugins",
+            "similarity": 0.705
+          },
+          {
+            "chunk_id": "claude-code/best-practices#configure-your-environment/install-plugins",
+            "similarity": 0.652
+          },
+          {
+            "chunk_id": "claude-code/plugins#develop-a-plugin-in-your-skills-directory",
+            "similarity": 0.645
+          },
+          {
+            "chunk_id": "claude-code/agent-sdk/plugins",
+            "similarity": 0.643
+          },
+          {
+            "chunk_id": "claude-code/plugins#develop-more-complex-plugins",
+            "similarity": 0.636
+          }
+        ],
+        "hit": false,
+        "first_gold_rank": null,
+        "reciprocal_rank": 0
+      },
+      {
+        "id": "b-01",
+        "category": "boundary",
+        "question": "Can I make Claude Code read its answers out loud to me?",
+        "gold_chunks": [],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/accessibility",
+            "similarity": 0.638
+          },
+          {
+            "chunk_id": "claude-code/accessibility#answer-menus-and-prompts",
+            "similarity": 0.617
+          },
+          {
+            "chunk_id": "claude-code/accessibility#hear-when-claude-code-needs-you",
+            "similarity": 0.612
+          },
+          {
+            "chunk_id": "claude-code/voice-dictation",
+            "similarity": 0.595
+          },
+          {
+            "chunk_id": "claude-code/how-claude-code-works#work-effectively-with-claude-code/its-a-conversation",
+            "similarity": 0.589
+          }
+        ],
+        "hit": false,
+        "first_gold_rank": null,
+        "reciprocal_rank": 0
+      },
+      {
+        "id": "b-02",
+        "category": "boundary",
+        "question": "What's the largest file Claude Code can read in a single operation?",
+        "gold_chunks": [],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/terminal-config#paste-large-content",
+            "similarity": 0.548
+          },
+          {
+            "chunk_id": "claude-code/computer-use#how-claude-works-on-your-screen",
+            "similarity": 0.534
+          },
+          {
+            "chunk_id": "claude-code/large-codebases",
+            "similarity": 0.533
+          },
+          {
+            "chunk_id": "claude-code/changelog-96",
+            "similarity": 0.533
+          },
+          {
+            "chunk_id": "claude-code/best-practices",
+            "similarity": 0.531
+          }
+        ],
+        "hit": false,
+        "first_gold_rank": null,
+        "reciprocal_rank": 0
+      },
+      {
+        "id": "b-03",
+        "category": "boundary",
+        "question": "Can I schedule Claude Code to automatically review every new pull request?",
+        "gold_chunks": [],
+        "retrieved": [
+          {
+            "chunk_id": "claude-code/desktop#work-with-code/review-your-code",
+            "similarity": 0.713
+          },
+          {
+            "chunk_id": "claude-code/common-workflows#prompt-recipes/run-claude-on-a-schedule",
+            "similarity": 0.667
+          },
+          {
+            "chunk_id": "claude-code/claude-code-on-the-web#auto-fix-pull-requests/how-claude-responds-to-pr-activity",
+            "similarity": 0.655
+          },
+          {
+            "chunk_id": "claude-code/code-review#how-reviews-work",
+            "similarity": 0.65
+          },
+          {
+            "chunk_id": "claude-code/claude-code-on-the-web#auto-fix-pull-requests",
+            "similarity": 0.643
+          }
+        ],
+        "hit": false,
+        "first_gold_rank": null,
+        "reciprocal_rank": 0
+      }
+    ]
+  }
+}
