@@ -15,6 +15,7 @@ import { config } from "../config";
 export interface ScoredChunk {
   chunkId: string;
   breadcrumb: string;
+  /** The full deep link (`pageUrl#slug`); the chunker stores it ready to use. */
   headingAnchor: string;
   content: string;
   similarity: number;

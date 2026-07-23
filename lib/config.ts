@@ -97,6 +97,43 @@ export const config = {
     maxOutputTokens: 1024,
   },
 
+  /**
+   * Model pricing in USD per 1,000,000 tokens, keyed by model ID. The displayed
+   * query cost is computed from the API usage object with these rates, never
+   * estimated (RAG-17). Prices are the one config value that drifts silently, so
+   * they carry a verification date; P7.5's audit re-checks them against the live
+   * pricing pages. Cache-token rates are the standard 1.25x (5-minute write) and
+   * 0.1x (read) multiples of the base input rate; v1 sends no cache_control, so
+   * those usage fields are 0 in practice and priced only defensively.
+   *
+   * verified: 2026-07-23 (claude-api model catalog + prompt-caching multipliers)
+   *
+   * OpenAI's text-embedding-3-small rate is deliberately absent: it is
+   * to-be-verified at calibration (P4.4), so query cost currently reflects
+   * generation only. The embedding portion (the refusal receipt's embedding-only
+   * cost, ui-ux-spec §7) joins once that rate is verified.
+   */
+  pricing: {
+    "claude-haiku-4-5": {
+      inputPerMTok: 1.0,
+      outputPerMTok: 5.0,
+      cacheWritePerMTok: 1.25,
+      cacheReadPerMTok: 0.1,
+    },
+    "claude-sonnet-4-6": {
+      inputPerMTok: 3.0,
+      outputPerMTok: 15.0,
+      cacheWritePerMTok: 3.75,
+      cacheReadPerMTok: 0.3,
+    },
+  },
+
+  /** SSE payload hygiene (PERF-12). The sources event carries snippets, not full
+   *  chunk bodies; `snippetChars` is that snippet length in characters. */
+  payload: {
+    snippetChars: 300,
+  },
+
   /** Ingestion write batching. Chunk upserts are grouped into multi-row
    *  statements to cut round-trips to the pooled connection (P2.6 Tier 2). */
   ingest: {

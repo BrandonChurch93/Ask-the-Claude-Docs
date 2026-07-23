@@ -29,7 +29,8 @@ function toVector(embedding: number[]): string {
  * only (RAG-11); similarity is `1 - distance`. Filters on the configured
  * embedding_model so a partial or mixed-model migration can never silently
  * compare cross-model vectors (RAG-10). `k` and the model come from config
- * (RAG-19).
+ * (RAG-19). `heading_anchor` is already the full deep link (chunker stores
+ * `url#slug`), so the sources SSE event needs no join for the source URL.
  */
 export async function retrieveTopK(
   embedding: number[],
