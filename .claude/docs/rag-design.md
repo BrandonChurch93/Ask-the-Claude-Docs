@@ -14,7 +14,7 @@ Related docs: `architecture.md` (decision log), `eval-harness.md` (how this pipe
 - **v1 corpus:** Claude Code documentation only. Source of truth: `https://code.claude.com/docs/llms.txt` (the markdown index of all pages).
 - Discovery: fetch `llms.txt`, parse the linked page URLs. Each page serves raw markdown at its `.md` URL.
 - The schema is multi-corpus from day one (`source` column); v1 populates a single source value `claude-code`.
-- **Known edge case:** not every listed URL serves raw markdown (e.g. the changelog redirects to rendered HTML on GitHub). Ingestion must validate each response before parsing.
+- **Known edge case:** not every listed URL is guaranteed to serve raw markdown. The changelog historically served rendered HTML on GitHub and serves markdown as of 2026-07 (verified across all 172 pages); validation is retained because any page could regress. Ingestion must validate each response before parsing.
 
 **Rules**
 - `RAG-01` Ingestion fetches only URLs discovered from `llms.txt`; no hardcoded page lists.
