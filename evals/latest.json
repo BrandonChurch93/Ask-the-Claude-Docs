@@ -1,6 +1,6 @@
 {
-  "run_id": "2026-07-23T19-21-26Z-746e08",
-  "commit": "746e081ad85fe28a2f0e295d664c1090f5e8af89",
+  "run_id": "2026-07-23T21-02-41Z-65288b",
+  "commit": "65288b1690e3bafaa461b04ff44e8ee2d620b5dd",
   "config_snapshot": {
     "k": 5,
     "threshold": {
@@ -9,12 +9,13 @@
       "calibratedAt": null,
       "calibrationRunId": null
     },
+    "excluded_page_patterns": ["changelog", "whats-new/%"],
     "embedding_model": "text-embedding-3-small",
     "generation_model": "claude-haiku-4-5"
   },
   "retrieval": {
-    "hit_at_5": 0.6,
-    "mrr": 0.4708333333333334,
+    "hit_at_5": 0.85,
+    "mrr": 0.6583333333333334,
     "answerable_count": 20,
     "per_question": [
       {
@@ -25,22 +26,27 @@
         "retrieved": [
           {
             "chunk_id": "claude-code/how-claude-code-works#the-agentic-loop",
+            "page_path": "how-claude-code-works",
             "similarity": 0.701
           },
           {
             "chunk_id": "claude-code/how-claude-code-works#the-agentic-loop/models",
+            "page_path": "how-claude-code-works",
             "similarity": 0.658
           },
           {
             "chunk_id": "claude-code/slack#how-it-works/automatic-detection",
+            "page_path": "slack",
             "similarity": 0.643
           },
           {
             "chunk_id": "claude-code/how-claude-code-works",
+            "page_path": "how-claude-code-works",
             "similarity": 0.623
           },
           {
             "chunk_id": "claude-code/web-quickstart#how-sessions-run",
+            "page_path": "web-quickstart",
             "similarity": 0.616
           }
         ],
@@ -59,22 +65,27 @@
         "retrieved": [
           {
             "chunk_id": "claude-code/quickstart#step-3-start-your-first-session",
+            "page_path": "quickstart",
             "similarity": 0.721
           },
           {
             "chunk_id": "claude-code/quickstart#step-2-log-in-to-your-account",
+            "page_path": "quickstart",
             "similarity": 0.665
           },
           {
             "chunk_id": "claude-code/authentication#log-in-to-claude-code",
+            "page_path": "authentication",
             "similarity": 0.655
           },
           {
             "chunk_id": "claude-code/desktop#start-a-session",
+            "page_path": "desktop",
             "similarity": 0.654
           },
           {
             "chunk_id": "claude-code/overview#get-started-4",
+            "page_path": "overview",
             "similarity": 0.653
           }
         ],
@@ -93,22 +104,27 @@
         "retrieved": [
           {
             "chunk_id": "claude-code/memory",
+            "page_path": "memory",
             "similarity": 0.659
           },
           {
             "chunk_id": "claude-code/memory#claudemd-files/set-up-a-project-claudemd",
+            "page_path": "memory",
             "similarity": 0.623
           },
           {
             "chunk_id": "claude-code/memory#troubleshoot-memory-issues/instructions-seem-lost-after-compact",
+            "page_path": "memory",
             "similarity": 0.604
           },
           {
             "chunk_id": "claude-code/prompt-library#related-resources",
+            "page_path": "prompt-library",
             "similarity": 0.597
           },
           {
             "chunk_id": "claude-code/memory#claudemd-files/write-effective-instructions",
+            "page_path": "memory",
             "similarity": 0.594
           }
         ],
@@ -126,22 +142,27 @@
         "retrieved": [
           {
             "chunk_id": "claude-code/context-window#what-survives-compaction",
+            "page_path": "context-window",
             "similarity": 0.454
           },
           {
             "chunk_id": "claude-code/glossary#c/compaction",
+            "page_path": "glossary",
             "similarity": 0.452
           },
           {
             "chunk_id": "claude-code/context-window#when-your-context-fills-up",
+            "page_path": "context-window",
             "similarity": 0.449
           },
           {
             "chunk_id": "claude-code/errors#request-errors/error-during-compaction-conversation-too-long",
+            "page_path": "errors",
             "similarity": 0.445
           },
           {
             "chunk_id": "claude-code/best-practices#manage-your-session/manage-context-aggressively",
+            "page_path": "best-practices",
             "similarity": 0.416
           }
         ],
@@ -159,22 +180,27 @@
         "retrieved": [
           {
             "chunk_id": "claude-code/hooks-guide#what-you-can-automate/auto-format-code-after-edits",
+            "page_path": "hooks-guide",
             "similarity": 0.636
           },
           {
             "chunk_id": "claude-code/best-practices#configure-your-environment-1",
+            "page_path": "best-practices",
             "similarity": 0.567
           },
           {
             "chunk_id": "claude-code/github-actions#advanced-configuration/customizing-claudes-behavior",
+            "page_path": "github-actions",
             "similarity": 0.561
           },
           {
             "chunk_id": "claude-code/headless#examples/add-claude-to-a-build-script",
+            "page_path": "headless",
             "similarity": 0.549
           },
           {
             "chunk_id": "claude-code/quickstart#step-5-make-your-first-code-change",
+            "page_path": "quickstart",
             "similarity": 0.547
           }
         ],
@@ -188,66 +214,78 @@
         "question": "How do I set up my own custom subagent for a specific kind of task?",
         "gold_chunks": [
           "claude-code/sub-agents#quickstart-create-your-first-subagent",
-          "claude-code/sub-agents#configure-subagents-1"
+          "claude-code/sub-agents#configure-subagents-1",
+          "claude-code/sub-agents"
         ],
         "retrieved": [
           {
             "chunk_id": "claude-code/sub-agents",
+            "page_path": "sub-agents",
             "similarity": 0.67
           },
           {
             "chunk_id": "claude-code/agent-sdk/subagents#benefits-of-using-subagents/specialized-instructions-and-knowledge",
+            "page_path": "agent-sdk/subagents",
             "similarity": 0.635
           },
           {
             "chunk_id": "claude-code/glossary#s/subagent",
+            "page_path": "glossary",
             "similarity": 0.617
           },
           {
             "chunk_id": "claude-code/sub-agents#work-with-subagents/understand-automatic-delegation-1",
+            "page_path": "sub-agents",
             "similarity": 0.605
           },
           {
             "chunk_id": "claude-code/agent-sdk/subagents#overview",
+            "page_path": "agent-sdk/subagents",
             "similarity": 0.599
           }
         ],
-        "hit": false,
-        "first_gold_rank": null,
-        "reciprocal_rank": 0
+        "hit": true,
+        "first_gold_rank": 1,
+        "reciprocal_rank": 1
       },
       {
         "id": "a-07",
         "category": "answerable",
         "question": "I keep repeating the same workflow with Claude — how do I package it up as a skill?",
         "gold_chunks": [
-          "claude-code/skills#getting-started/create-your-first-skill"
+          "claude-code/skills#getting-started/create-your-first-skill",
+          "claude-code/skills"
         ],
         "retrieved": [
           {
             "chunk_id": "claude-code/best-practices#configure-your-environment/create-skills",
+            "page_path": "best-practices",
             "similarity": 0.65
           },
           {
             "chunk_id": "claude-code/skills",
+            "page_path": "skills",
             "similarity": 0.624
           },
           {
             "chunk_id": "claude-code/skills#configure-skills/skill-content-lifecycle",
+            "page_path": "skills",
             "similarity": 0.621
           },
           {
             "chunk_id": "claude-code/skills#bundled-skills",
+            "page_path": "skills",
             "similarity": 0.612
           },
           {
             "chunk_id": "claude-code/communications-kit#tips-and-tricks-campaign/automate-your-workflows",
+            "page_path": "communications-kit",
             "similarity": 0.609
           }
         ],
-        "hit": false,
-        "first_gold_rank": null,
-        "reciprocal_rank": 0
+        "hit": true,
+        "first_gold_rank": 2,
+        "reciprocal_rank": 0.5
       },
       {
         "id": "a-08",
@@ -255,33 +293,39 @@
         "question": "How do I hook Claude Code up to a remote MCP server?",
         "gold_chunks": [
           "claude-code/mcp#installing-mcp-servers/option-2-add-a-remote-sse-server",
-          "claude-code/mcp#installing-mcp-servers"
+          "claude-code/mcp#installing-mcp-servers",
+          "claude-code/mcp"
         ],
         "retrieved": [
           {
             "chunk_id": "claude-code/mcp-quickstart",
+            "page_path": "mcp-quickstart",
             "similarity": 0.711
           },
           {
             "chunk_id": "claude-code/mcp#use-claude-code-as-an-mcp-server",
+            "page_path": "mcp",
             "similarity": 0.694
           },
           {
             "chunk_id": "claude-code/mcp#what-you-can-do-with-mcp",
+            "page_path": "mcp",
             "similarity": 0.688
           },
           {
             "chunk_id": "claude-code/mcp",
+            "page_path": "mcp",
             "similarity": 0.682
           },
           {
             "chunk_id": "claude-code/mcp-quickstart#connect-from-other-surfaces",
+            "page_path": "mcp-quickstart",
             "similarity": 0.676
           }
         ],
-        "hit": false,
-        "first_gold_rank": null,
-        "reciprocal_rank": 0
+        "hit": true,
+        "first_gold_rank": 4,
+        "reciprocal_rank": 0.25
       },
       {
         "id": "a-09",
@@ -293,22 +337,27 @@
         "retrieved": [
           {
             "chunk_id": "claude-code/settings#settings-files/settings-precedence-1",
+            "page_path": "settings",
             "similarity": 0.562
           },
           {
             "chunk_id": "claude-code/settings#configuration-scopes/how-scopes-interact",
+            "page_path": "settings",
             "similarity": 0.529
           },
           {
             "chunk_id": "claude-code/settings#settings-files/settings-precedence-3",
+            "page_path": "settings",
             "similarity": 0.527
           },
           {
             "chunk_id": "claude-code/env-vars#precedence",
+            "page_path": "env-vars",
             "similarity": 0.523
           },
           {
             "chunk_id": "claude-code/server-managed-settings#settings-delivery/settings-precedence",
+            "page_path": "server-managed-settings",
             "similarity": 0.504
           }
         ],
@@ -326,22 +375,27 @@
         "retrieved": [
           {
             "chunk_id": "claude-code/best-practices#explore-first-then-plan-then-code",
+            "page_path": "best-practices",
             "similarity": 0.648
           },
           {
             "chunk_id": "claude-code/large-codebases#scope-and-plan-changes-that-span-packages",
+            "page_path": "large-codebases",
             "similarity": 0.601
           },
           {
             "chunk_id": "claude-code/how-claude-code-works#work-effectively-with-claude-code/explore-before-implementing",
+            "page_path": "how-claude-code-works",
             "similarity": 0.594
           },
           {
             "chunk_id": "claude-code/how-claude-code-works#work-effectively-with-claude-code/its-a-conversation",
+            "page_path": "how-claude-code-works",
             "similarity": 0.589
           },
           {
             "chunk_id": "claude-code/ultraplan#choose-where-to-execute",
+            "page_path": "ultraplan",
             "similarity": 0.583
           }
         ],
@@ -360,22 +414,27 @@
         "retrieved": [
           {
             "chunk_id": "claude-code/how-claude-code-works#the-agentic-loop/models",
+            "page_path": "how-claude-code-works",
             "similarity": 0.666
           },
           {
             "chunk_id": "claude-code/amazon-bedrock#set-up-manually/4-pin-model-versions-4",
+            "page_path": "amazon-bedrock",
             "similarity": 0.621
           },
           {
             "chunk_id": "claude-code/google-vertex-ai#startup-model-checks",
+            "page_path": "google-vertex-ai",
             "similarity": 0.615
           },
           {
             "chunk_id": "claude-code/google-vertex-ai#set-up-manually/5-pin-model-versions-1",
+            "page_path": "google-vertex-ai",
             "similarity": 0.595
           },
           {
             "chunk_id": "claude-code/claude-platform-on-aws#setup/3-pin-model-versions",
+            "page_path": "claude-platform-on-aws",
             "similarity": 0.595
           }
         ],
@@ -389,33 +448,39 @@
         "question": "How do I get started building an agent with the Claude Agent SDK?",
         "gold_chunks": [
           "claude-code/agent-sdk/quickstart#key-concepts",
-          "claude-code/agent-sdk/overview#get-started-1"
+          "claude-code/agent-sdk/overview#get-started-1",
+          "claude-code/agent-sdk/overview#get-started-2"
         ],
         "retrieved": [
           {
             "chunk_id": "claude-code/agent-sdk/overview#get-started-2",
+            "page_path": "agent-sdk/overview",
             "similarity": 0.732
           },
           {
             "chunk_id": "claude-code/agent-sdk/overview#license-and-terms",
-            "similarity": 0.704
+            "page_path": "agent-sdk/overview",
+            "similarity": 0.703
           },
           {
             "chunk_id": "claude-code/agent-sdk/overview",
+            "page_path": "agent-sdk/overview",
             "similarity": 0.699
           },
           {
             "chunk_id": "claude-code/agent-sdk/overview#compare-the-agent-sdk-to-other-claude-tools",
+            "page_path": "agent-sdk/overview",
             "similarity": 0.688
           },
           {
             "chunk_id": "claude-code/agent-sdk/quickstart#next-steps",
+            "page_path": "agent-sdk/quickstart",
             "similarity": 0.684
           }
         ],
-        "hit": false,
-        "first_gold_rank": null,
-        "reciprocal_rank": 0
+        "hit": true,
+        "first_gold_rank": 1,
+        "reciprocal_rank": 1
       },
       {
         "id": "a-13",
@@ -425,22 +490,27 @@
         "retrieved": [
           {
             "chunk_id": "claude-code/vs-code#install-the-extension",
+            "page_path": "vs-code",
             "similarity": 0.81
           },
           {
             "chunk_id": "claude-code/vs-code#prerequisites",
+            "page_path": "vs-code",
             "similarity": 0.782
           },
           {
             "chunk_id": "claude-code/vs-code",
+            "page_path": "vs-code",
             "similarity": 0.759
           },
           {
             "chunk_id": "claude-code/vs-code#next-steps",
+            "page_path": "vs-code",
             "similarity": 0.729
           },
           {
             "chunk_id": "claude-code/vs-code#vs-code-extension-vs-claude-code-cli/run-cli-in-vs-code",
+            "page_path": "vs-code",
             "similarity": 0.725
           }
         ],
@@ -456,22 +526,27 @@
         "retrieved": [
           {
             "chunk_id": "claude-code/github-actions#what-can-claude-do/claude-code-action",
+            "page_path": "github-actions",
             "similarity": 0.719
           },
           {
             "chunk_id": "claude-code/github-actions#example-use-cases",
+            "page_path": "github-actions",
             "similarity": 0.707
           },
           {
             "chunk_id": "claude-code/github-actions#why-use-claude-code-github-actions",
+            "page_path": "github-actions",
             "similarity": 0.677
           },
           {
             "chunk_id": "claude-code/github-actions#manual-setup",
+            "page_path": "github-actions",
             "similarity": 0.671
           },
           {
             "chunk_id": "claude-code/github-actions#troubleshooting/claude-not-responding-to-claude-commands",
+            "page_path": "github-actions",
             "similarity": 0.666
           }
         ],
@@ -490,22 +565,27 @@
         "retrieved": [
           {
             "chunk_id": "claude-code/sandbox-environments#sandboxed-bash-tool",
+            "page_path": "sandbox-environments",
             "similarity": 0.696
           },
           {
             "chunk_id": "claude-code/sandboxing",
+            "page_path": "sandboxing",
             "similarity": 0.662
           },
           {
             "chunk_id": "claude-code/sandboxing#get-started",
+            "page_path": "sandboxing",
             "similarity": 0.646
           },
           {
             "chunk_id": "claude-code/sandboxing#get-started/sandbox-modes-2",
+            "page_path": "sandboxing",
             "similarity": 0.638
           },
           {
             "chunk_id": "claude-code/sandboxing#get-started/sandbox-modes-1",
+            "page_path": "sandboxing",
             "similarity": 0.636
           }
         ],
@@ -521,22 +601,27 @@
         "retrieved": [
           {
             "chunk_id": "claude-code/headless#basic-usage",
+            "page_path": "headless",
             "similarity": 0.63
           },
           {
             "chunk_id": "claude-code/headless",
+            "page_path": "headless",
             "similarity": 0.622
           },
           {
             "chunk_id": "claude-code/best-practices#automate-and-scale",
+            "page_path": "best-practices",
             "similarity": 0.611
           },
           {
             "chunk_id": "claude-code/headless#examples/add-claude-to-a-build-script",
+            "page_path": "headless",
             "similarity": 0.611
           },
           {
             "chunk_id": "claude-code/how-claude-code-works#environments-and-interfaces/interfaces",
+            "page_path": "how-claude-code-works",
             "similarity": 0.603
           }
         ],
@@ -552,22 +637,27 @@
         "retrieved": [
           {
             "chunk_id": "claude-code/costs#reduce-token-usage",
+            "page_path": "costs",
             "similarity": 0.615
           },
           {
             "chunk_id": "claude-code/costs#reduce-token-usage/write-specific-prompts",
+            "page_path": "costs",
             "similarity": 0.58
           },
           {
             "chunk_id": "claude-code/costs#reduce-token-usage/delegate-verbose-operations-to-subagents",
+            "page_path": "costs",
             "similarity": 0.572
           },
           {
             "chunk_id": "claude-code/costs#reduce-token-usage/move-instructions-from-claudemd-to-skills",
+            "page_path": "costs",
             "similarity": 0.555
           },
           {
             "chunk_id": "claude-code/costs#background-token-usage",
+            "page_path": "costs",
             "similarity": 0.548
           }
         ],
@@ -585,24 +675,29 @@
         ],
         "retrieved": [
           {
-            "chunk_id": "claude-code/changelog-42",
-            "similarity": 0.505
+            "chunk_id": "claude-code/communications-kit#tips-and-tricks-campaign/control-and-safety",
+            "page_path": "communications-kit",
+            "similarity": 0.522
           },
           {
-            "chunk_id": "claude-code/changelog-3",
-            "similarity": 0.497
+            "chunk_id": "claude-code/how-claude-code-works#stay-safe-with-checkpoints-and-permissions",
+            "page_path": "how-claude-code-works",
+            "similarity": 0.516
           },
           {
-            "chunk_id": "claude-code/changelog-19",
-            "similarity": 0.496
+            "chunk_id": "claude-code/agent-sdk/file-checkpointing#common-patterns/multiple-restore-points-1",
+            "page_path": "agent-sdk/file-checkpointing",
+            "similarity": 0.491
           },
           {
-            "chunk_id": "claude-code/changelog-243",
-            "similarity": 0.489
+            "chunk_id": "claude-code/security-guidance#disable-or-uninstall",
+            "page_path": "security-guidance",
+            "similarity": 0.487
           },
           {
-            "chunk_id": "claude-code/changelog-2",
-            "similarity": 0.489
+            "chunk_id": "claude-code/auto-mode-config#inspect-the-defaults-and-your-effective-config-3",
+            "page_path": "auto-mode-config",
+            "similarity": 0.477
           }
         ],
         "hit": false,
@@ -620,22 +715,27 @@
         "retrieved": [
           {
             "chunk_id": "claude-code/amazon-bedrock#prerequisites",
+            "page_path": "amazon-bedrock",
             "similarity": 0.769
           },
           {
             "chunk_id": "claude-code/amazon-bedrock#set-up-manually/3-configure-claude-code",
+            "page_path": "amazon-bedrock",
             "similarity": 0.752
           },
           {
             "chunk_id": "claude-code/amazon-bedrock#additional-resources",
+            "page_path": "amazon-bedrock",
             "similarity": 0.748
           },
           {
             "chunk_id": "claude-code/amazon-bedrock#sign-in-with-bedrock",
+            "page_path": "amazon-bedrock",
             "similarity": 0.714
           },
           {
             "chunk_id": "claude-code/amazon-bedrock-4",
+            "page_path": "amazon-bedrock",
             "similarity": 0.706
           }
         ],
@@ -649,33 +749,39 @@
         "question": "What does it take to write my own plugin for Claude Code?",
         "gold_chunks": [
           "claude-code/plugins#quickstart/create-your-first-plugin-1",
-          "claude-code/plugins#quickstart"
+          "claude-code/plugins#quickstart",
+          "claude-code/plugins"
         ],
         "retrieved": [
           {
             "chunk_id": "claude-code/plugins",
+            "page_path": "plugins",
             "similarity": 0.705
           },
           {
             "chunk_id": "claude-code/best-practices#configure-your-environment/install-plugins",
+            "page_path": "best-practices",
             "similarity": 0.652
           },
           {
             "chunk_id": "claude-code/plugins#develop-a-plugin-in-your-skills-directory",
+            "page_path": "plugins",
             "similarity": 0.645
           },
           {
             "chunk_id": "claude-code/agent-sdk/plugins",
+            "page_path": "agent-sdk/plugins",
             "similarity": 0.643
           },
           {
             "chunk_id": "claude-code/plugins#develop-more-complex-plugins",
+            "page_path": "plugins",
             "similarity": 0.636
           }
         ],
-        "hit": false,
-        "first_gold_rank": null,
-        "reciprocal_rank": 0
+        "hit": true,
+        "first_gold_rank": 1,
+        "reciprocal_rank": 1
       },
       {
         "id": "b-01",
@@ -685,22 +791,27 @@
         "retrieved": [
           {
             "chunk_id": "claude-code/accessibility",
+            "page_path": "accessibility",
             "similarity": 0.638
           },
           {
             "chunk_id": "claude-code/accessibility#answer-menus-and-prompts",
+            "page_path": "accessibility",
             "similarity": 0.617
           },
           {
             "chunk_id": "claude-code/accessibility#hear-when-claude-code-needs-you",
+            "page_path": "accessibility",
             "similarity": 0.612
           },
           {
             "chunk_id": "claude-code/voice-dictation",
+            "page_path": "voice-dictation",
             "similarity": 0.595
           },
           {
             "chunk_id": "claude-code/how-claude-code-works#work-effectively-with-claude-code/its-a-conversation",
+            "page_path": "how-claude-code-works",
             "similarity": 0.589
           }
         ],
@@ -716,22 +827,27 @@
         "retrieved": [
           {
             "chunk_id": "claude-code/terminal-config#paste-large-content",
+            "page_path": "terminal-config",
             "similarity": 0.548
           },
           {
             "chunk_id": "claude-code/computer-use#how-claude-works-on-your-screen",
+            "page_path": "computer-use",
             "similarity": 0.534
           },
           {
             "chunk_id": "claude-code/large-codebases",
-            "similarity": 0.533
-          },
-          {
-            "chunk_id": "claude-code/changelog-96",
+            "page_path": "large-codebases",
             "similarity": 0.533
           },
           {
             "chunk_id": "claude-code/best-practices",
+            "page_path": "best-practices",
+            "similarity": 0.531
+          },
+          {
+            "chunk_id": "claude-code/how-claude-code-works#what-claude-can-access",
+            "page_path": "how-claude-code-works",
             "similarity": 0.531
           }
         ],
@@ -747,22 +863,27 @@
         "retrieved": [
           {
             "chunk_id": "claude-code/desktop#work-with-code/review-your-code",
+            "page_path": "desktop",
             "similarity": 0.713
           },
           {
             "chunk_id": "claude-code/common-workflows#prompt-recipes/run-claude-on-a-schedule",
+            "page_path": "common-workflows",
             "similarity": 0.667
           },
           {
             "chunk_id": "claude-code/claude-code-on-the-web#auto-fix-pull-requests/how-claude-responds-to-pr-activity",
+            "page_path": "claude-code-on-the-web",
             "similarity": 0.655
           },
           {
             "chunk_id": "claude-code/code-review#how-reviews-work",
+            "page_path": "code-review",
             "similarity": 0.65
           },
           {
             "chunk_id": "claude-code/claude-code-on-the-web#auto-fix-pull-requests",
+            "page_path": "claude-code-on-the-web",
             "similarity": 0.643
           }
         ],

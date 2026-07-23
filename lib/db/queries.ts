@@ -13,6 +13,7 @@ import type { PageState } from "../rag/planner";
 
 export interface RetrievedChunk {
   chunk_id: string;
+  page_path: string;
   breadcrumb: string;
   heading_anchor: string;
   content: string;
@@ -31,14 +32,20 @@ function toVector(embedding: number[]): string {
  * compare cross-model vectors (RAG-10). `k` and the model come from config
  * (RAG-19). `heading_anchor` is already the full deep link (chunker stores
  * `url#slug`), so the sources SSE event needs no join for the source URL.
+ *
+ * The query is a plain top-k with no exclusion filter: excluded pages (RAG-23)
+ * are removed at INGESTION (corpus scope), so the corpus is already clean and
+ * HNSW works without a post-filter. The under-return guard below is a permanent
+ * invariant even though its trigger class (an all-excluded candidate set) is gone.
  */
 export async function retrieveTopK(
   embedding: number[],
 ): Promise<RetrievedChunk[]> {
   const vector = toVector(embedding);
-  return sql<RetrievedChunk[]>`
+  const rows = await sql<RetrievedChunk[]>`
     select
       chunk_id,
+      page_path,
       breadcrumb,
       heading_anchor,
       content,
@@ -48,6 +55,16 @@ export async function retrieveTopK(
     order by embedding <=> ${vector}::vector
     limit ${config.retrieval.k}
   `;
+  if (rows.length < config.retrieval.k) {
+    console.warn(
+      JSON.stringify({
+        event: "retrieval_underfilled",
+        requested_k: config.retrieval.k,
+        returned: rows.length,
+      }),
+    );
+  }
+  return rows;
 }
 
 /**
@@ -202,8 +219,26 @@ export async function deletePages(pagePaths: string[]): Promise<void> {
 export async function getCoverage(): Promise<
   { pagePath: string; title: string; url: string }[]
 > {
+  // Defensive exclusion (RAG-21/RAG-23): the corpus is already clean (excluded
+  // pages are dropped at ingestion), so this is belt-and-suspenders: coverage
+  // can never advertise a topic the product would not cite.
   return sql<{ pagePath: string; title: string; url: string }[]>`
-    select page_path as "pagePath", title, url from documents order by title`;
+    select page_path as "pagePath", title, url
+    from documents
+    where not (page_path like any(${config.corpus.excludedPagePatterns}))
+    order by title`;
+}
+
+/**
+ * Count corpus chunks whose page matches an excluded pattern (RAG-23 regression
+ * check). The corpus is scoped at ingestion, so this must always be 0; the eval
+ * asserts on it so a broken discovery filter fails loudly.
+ */
+export async function countExcludedChunks(): Promise<number> {
+  const [row] = await sql<{ count: number }[]>`
+    select count(*)::int as count from chunks
+    where page_path like any(${config.corpus.excludedPagePatterns})`;
+  return row?.count ?? 0;
 }
 
 /** The freshness timestamp: most recent sync (RAG §9.5 `synced_at` max). */

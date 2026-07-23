@@ -14,6 +14,7 @@ import { config } from "../config";
 
 export interface ScoredChunk {
   chunkId: string;
+  pagePath: string;
   breadcrumb: string;
   /** The full deep link (`pageUrl#slug`); the chunker stores it ready to use. */
   headingAnchor: string;
@@ -79,6 +80,7 @@ export async function retrieve(question: string): Promise<RetrievalOutcome> {
 
   const results: ScoredChunk[] = rows.map((r) => ({
     chunkId: r.chunk_id,
+    pagePath: r.page_path,
     breadcrumb: r.breadcrumb,
     headingAnchor: r.heading_anchor,
     content: r.content,

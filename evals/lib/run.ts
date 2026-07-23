@@ -45,6 +45,7 @@ export async function runRetrievalEval(): Promise<QuestionResult[]> {
     const outcome = await retrieve(q.question);
     const retrieved = outcome.results.map((r) => ({
       chunk_id: r.chunkId,
+      page_path: r.pagePath,
       similarity: round(r.similarity),
     }));
     results.push(

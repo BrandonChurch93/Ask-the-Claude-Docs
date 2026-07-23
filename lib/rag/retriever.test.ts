@@ -4,6 +4,7 @@ import { config } from "../config";
 
 const chunk = (id: string, similarity: number): ScoredChunk => ({
   chunkId: id,
+  pagePath: id,
   breadcrumb: `bc ${id}`,
   headingAnchor: `https://x/${id}#${id}`,
   content: `content ${id}`,

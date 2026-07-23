@@ -16,6 +16,7 @@ export interface RunArtifact {
   config_snapshot: {
     k: number;
     threshold: typeof config.retrieval.threshold;
+    excluded_page_patterns: readonly string[];
     embedding_model: string;
     generation_model: string;
   };
@@ -48,6 +49,7 @@ export function buildArtifact(
     config_snapshot: {
       k: config.retrieval.k,
       threshold: config.retrieval.threshold,
+      excluded_page_patterns: config.corpus.excludedPagePatterns,
       embedding_model: config.embedding.model,
       generation_model: config.generation.model,
     },

@@ -54,6 +54,16 @@ async function main() {
       console.log(`  ... and ${r.chunksToEmbed.length - 10} more`);
   }
 
+  // Deleting chunks leaves dead entries in the HNSW graph (pgvector reclaims them
+  // only on VACUUM); a similarity search near a deleted region can then return
+  // fewer than k live rows. VACUUM after any deletion so the index stays healthy
+  // for retrieval and the eval's under-return guard (P4.3 Tier 2).
+  const deleted = r.pagesRemoved > 0 || r.chunksToDelete.length > 0;
+  if (!dryRun && deleted) {
+    await sql`vacuum chunks`;
+    console.log("vacuumed chunks (HNSW dead-entry cleanup after deletions)");
+  }
+
   await sql.end();
 }
 

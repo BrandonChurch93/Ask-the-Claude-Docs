@@ -43,6 +43,16 @@ export const config = {
     source: "claude-code",
     /** Concurrent page fetches during discovery (politeness bound). */
     fetchConcurrency: 8,
+    /** Corpus scope is llms.txt MINUS these page patterns (SQL/glob LIKE), applied
+     *  at discovery so the daily sync deletes any previously-ingested ones and
+     *  never re-adds them (RAG-01, RAG-23). Release-note content (the changelog +
+     *  weekly what's-new pages, ~10% of the corpus) is high-volume, low-value for
+     *  how-to questions, and grows every sync; excluding it at ingestion keeps the
+     *  retrieval query clean (no HNSW post-filter / ef_search machinery). Accepted
+     *  cost: "what changed in week X" is out of scope for this how-to Q&A. Chosen
+     *  at P4.3 after retrieval-time filtering was falsified twice (HNSW
+     *  post-filtering, then the ef_search candidate cap). */
+    excludedPagePatterns: ["changelog", "whats-new/%"],
   },
 
   /** Chunking parameters (RAG §2). Split at ## and ###; #### and deeper stay in-parent. */

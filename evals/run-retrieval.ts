@@ -1,7 +1,11 @@
 import { execSync } from "node:child_process";
 
 import { sql } from "../lib/db/client";
+import { countExcludedChunks } from "../lib/db/queries";
+import { isExcludedPage } from "../lib/rag/exclusion";
+import { config } from "../lib/config";
 import { runRetrievalEval } from "./lib/run";
+import { assertRetrievalInvariants } from "./lib/metrics";
 import { buildArtifact, writeArtifact } from "./lib/artifact";
 
 /**
@@ -11,7 +15,16 @@ import { buildArtifact, writeArtifact } from "./lib/artifact";
  */
 async function main() {
   const commit = execSync("git rev-parse HEAD", { encoding: "utf8" }).trim();
+  // RAG-23 corpus check: no excluded pattern may exist in the ingested corpus.
+  const excludedInCorpus = await countExcludedChunks();
+  if (excludedInCorpus > 0) {
+    throw new Error(
+      `corpus contains ${excludedInCorpus} excluded-pattern chunks (RAG-23); re-ingest to scope them out`,
+    );
+  }
   const results = await runRetrievalEval();
+  // RAG-23 regression guard (P4.3): full top-k everywhere, no excluded page leaks.
+  assertRetrievalInvariants(results, config.retrieval.k, isExcludedPage);
   const artifact = buildArtifact(results, commit, new Date());
   const { runPath } = writeArtifact(artifact);
   const m = artifact.retrieval;

@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 import { config } from "../config";
+import { isExcludedPage } from "./exclusion";
 
 /**
  * Corpus discovery and fetch (rag-design.md §1). Discovery starts from llms.txt
@@ -92,13 +93,19 @@ export function pageHash(rawMarkdown: string): string {
   return createHash("sha256").update(rawMarkdown).digest("hex");
 }
 
-/** Fetch and parse llms.txt into the full page list (RAG-01). */
+/**
+ * Fetch and parse llms.txt into the page list, then apply the corpus-scope
+ * exclusion (RAG-01, RAG-23): pages matching `corpus.excludedPagePatterns` are
+ * dropped at discovery, so the diff planner sees them as removed and the sync
+ * deletes any previously ingested. `zero page refs` is checked before the
+ * exclusion so an empty llms.txt still fails loudly.
+ */
 export async function discoverPages(): Promise<PageRef[]> {
   const res = await fetch(config.corpus.llmsTxtUrl);
   if (!res.ok) throw new Error(`llms.txt fetch failed: HTTP ${res.status}`);
   const refs = parseLlmsTxt(await res.text());
   if (refs.length === 0) throw new Error("llms.txt produced zero page refs");
-  return refs;
+  return refs.filter((r) => !isExcludedPage(r.pagePath));
 }
 
 type FetchOutcome =

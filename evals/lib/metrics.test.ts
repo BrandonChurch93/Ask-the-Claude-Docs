@@ -1,9 +1,18 @@
 import { describe, it, expect } from "vitest";
-import { scoreQuestion, aggregate, type QuestionResult } from "./metrics";
+import {
+  scoreQuestion,
+  aggregate,
+  assertRetrievalInvariants,
+  type QuestionResult,
+} from "./metrics";
 import { buildArtifact } from "./artifact";
 
 const retrieved = (...ids: string[]) =>
-  ids.map((id, i) => ({ chunk_id: id, similarity: 0.9 - i * 0.05 }));
+  ids.map((id, i) => ({
+    chunk_id: id,
+    page_path: id,
+    similarity: 0.9 - i * 0.05,
+  }));
 
 describe("scoreQuestion (eval-harness §2)", () => {
   it("hits at rank 1 with reciprocal rank 1", () => {
@@ -95,6 +104,43 @@ describe("aggregate (eval-harness §2)", () => {
       mrr: 0,
       answerable_count: 0,
     });
+  });
+});
+
+describe("assertRetrievalInvariants (P4.3 regression guard, RAG-23)", () => {
+  const noneExcluded = () => false;
+  const full = scoreQuestion(
+    "a-1",
+    "answerable",
+    "q",
+    ["g"],
+    retrieved("g", "x", "y", "z", "w"),
+  );
+
+  it("passes when every question returns full k and nothing is excluded", () => {
+    expect(() =>
+      assertRetrievalInvariants([full], 5, noneExcluded),
+    ).not.toThrow();
+  });
+
+  it("throws when a question under-returns (< k), the HNSW post-filter bug", () => {
+    const short = scoreQuestion(
+      "a-2",
+      "answerable",
+      "q",
+      ["g"],
+      retrieved("a", "b", "c"),
+    );
+    expect(() => assertRetrievalInvariants([short], 5, noneExcluded)).toThrow(
+      /under-filled/,
+    );
+  });
+
+  it("throws when an excluded page leaks into a question's sources", () => {
+    // page 'x' is on the exclusion list but appears in the retrieved set.
+    expect(() =>
+      assertRetrievalInvariants([full], 5, (p) => p === "x"),
+    ).toThrow(/excluded page leaked/);
   });
 });
 

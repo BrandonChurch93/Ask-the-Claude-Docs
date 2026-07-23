@@ -9,6 +9,7 @@ export type EvalCategory = "answerable" | "boundary";
 
 export interface RetrievedChunkRef {
   chunk_id: string;
+  page_path: string;
   similarity: number;
 }
 
@@ -62,6 +63,37 @@ export function scoreQuestion(
     first_gold_rank: firstGoldRank,
     reciprocal_rank: firstGoldRank === null ? 0 : 1 / firstGoldRank,
   };
+}
+
+/**
+ * Regression guard (P4.3): every question must return a full top-k, and no
+ * excluded page (RAG-23) may appear in any question's sources. `isExcluded` is
+ * injected so this stays pure/unit-testable. Throws with the offending question
+ * ids so a reintroduced HNSW post-filter bug or an exclusion leak fails loudly.
+ */
+export function assertRetrievalInvariants(
+  results: QuestionResult[],
+  k: number,
+  isExcluded: (pagePath: string) => boolean,
+): void {
+  const underfilled = results.filter((r) => r.retrieved.length < k);
+  const leaked = results.filter((r) =>
+    r.retrieved.some((c) => isExcluded(c.page_path)),
+  );
+  if (underfilled.length > 0 || leaked.length > 0) {
+    const parts: string[] = [];
+    if (underfilled.length > 0) {
+      parts.push(
+        `under-filled (< ${k}): ${underfilled.map((r) => `${r.id}=${r.retrieved.length}`).join(", ")}`,
+      );
+    }
+    if (leaked.length > 0) {
+      parts.push(
+        `excluded page leaked into: ${leaked.map((r) => r.id).join(", ")}`,
+      );
+    }
+    throw new Error(`retrieval invariants violated: ${parts.join("; ")}`);
+  }
 }
 
 /** Aggregate hit@5 and MRR over the answerable results (boundary excluded). */
