@@ -1,15 +1,18 @@
 {
-  "run_id": "2026-07-23T21-02-41Z-65288b",
-  "commit": "65288b1690e3bafaa461b04ff44e8ee2d620b5dd",
+  "run_id": "2026-07-23T21-34-28Z-ffc726",
+  "commit": "ffc726682425c93986167689c1d0ee9ce59a8af4",
   "config_snapshot": {
     "k": 5,
     "threshold": {
-      "status": "UNCALIBRATED",
-      "value": null,
-      "calibratedAt": null,
-      "calibrationRunId": null
+      "status": "CALIBRATED",
+      "value": 0.35,
+      "calibratedAt": "2026-07-23",
+      "calibrationRunId": "calibration-2026-07-23T21-22-50Z-ffc726"
     },
-    "excluded_page_patterns": ["changelog", "whats-new/%"],
+    "excluded_page_patterns": [
+      "changelog",
+      "whats-new/%"
+    ],
     "embedding_model": "text-embedding-3-small",
     "generation_model": "claude-haiku-4-5"
   },
@@ -22,7 +25,9 @@
         "id": "a-01",
         "category": "answerable",
         "question": "What actually happens under the hood when Claude Code works on a task?",
-        "gold_chunks": ["claude-code/how-claude-code-works#the-agentic-loop"],
+        "gold_chunks": [
+          "claude-code/how-claude-code-works#the-agentic-loop"
+        ],
         "retrieved": [
           {
             "chunk_id": "claude-code/how-claude-code-works#the-agentic-loop",
@@ -486,7 +491,9 @@
         "id": "a-13",
         "category": "answerable",
         "question": "How do I get the Claude Code extension installed in VS Code?",
-        "gold_chunks": ["claude-code/vs-code#install-the-extension"],
+        "gold_chunks": [
+          "claude-code/vs-code#install-the-extension"
+        ],
         "retrieved": [
           {
             "chunk_id": "claude-code/vs-code#install-the-extension",
@@ -522,7 +529,9 @@
         "id": "a-14",
         "category": "answerable",
         "question": "How do I wire up Claude Code to run inside a GitHub Actions workflow?",
-        "gold_chunks": ["claude-code/github-actions#manual-setup"],
+        "gold_chunks": [
+          "claude-code/github-actions#manual-setup"
+        ],
         "retrieved": [
           {
             "chunk_id": "claude-code/github-actions#what-can-claude-do/claude-code-action",
@@ -597,7 +606,9 @@
         "id": "a-16",
         "category": "answerable",
         "question": "How do I run Claude Code from a shell script without the interactive interface?",
-        "gold_chunks": ["claude-code/headless#basic-usage"],
+        "gold_chunks": [
+          "claude-code/headless#basic-usage"
+        ],
         "retrieved": [
           {
             "chunk_id": "claude-code/headless#basic-usage",
@@ -633,7 +644,9 @@
         "id": "a-17",
         "category": "answerable",
         "question": "What can I do to cut down how many tokens Claude Code burns through?",
-        "gold_chunks": ["claude-code/costs#reduce-token-usage"],
+        "gold_chunks": [
+          "claude-code/costs#reduce-token-usage"
+        ],
         "retrieved": [
           {
             "chunk_id": "claude-code/costs#reduce-token-usage",

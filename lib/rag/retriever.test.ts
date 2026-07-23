@@ -42,13 +42,26 @@ describe("partition (RAG §6, RAG-13/14)", () => {
     expect(p.nearMisses.map((c) => c.chunkId)).toEqual(["a", "b"]);
   });
 
-  it("while UNCALIBRATED, treats all as context and never refuses (tolerated until P4.4)", () => {
-    expect(config.retrieval.threshold.status).toBe("UNCALIBRATED");
-    const p = partition(results, config.retrieval.threshold);
+  it("handles an UNCALIBRATED threshold: all context, never refuses (the pre-P4.4 tolerance path)", () => {
+    const p = partition(results, {
+      status: "UNCALIBRATED",
+      value: null,
+      calibratedAt: null,
+      calibrationRunId: null,
+    });
     expect(p.calibrated).toBe(false);
     expect(p.threshold).toBeNull();
     expect(p.contextSet).toHaveLength(4);
     expect(p.nearMisses).toEqual([]);
     expect(p.refused).toBe(false);
+  });
+
+  it("config threshold is CALIBRATED at P4.4 (T=0.35, RAG-15)", () => {
+    expect(config.retrieval.threshold.status).toBe("CALIBRATED");
+    expect(config.retrieval.threshold.value).toBe(0.35);
+    if (config.retrieval.threshold.status === "CALIBRATED") {
+      expect(config.retrieval.threshold.calibratedAt).toBeTruthy();
+      expect(config.retrieval.threshold.calibrationRunId).toBeTruthy();
+    }
   });
 });

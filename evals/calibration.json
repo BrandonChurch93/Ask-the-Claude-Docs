@@ -1,0 +1,160 @@
+{
+  "run_id": "calibration-2026-07-23T21-22-50Z-ffc726",
+  "commit": "ffc726682425c93986167689c1d0ee9ce59a8af4",
+  "calibrated_at": "2026-07-23",
+  "threshold": 0.35,
+  "rationale": "No clean gap exists between plausible refusals (0.57-0.64) and weak-but-real answerables (0.45-0.64); they interleave, and cosine cannot separate 'adjacent but unanswered' from 'answered'. A clean gap DOES exist between clearly-off-corpus (~0.20) and real content (0.45+), so T sits there. The server gate's honest job is clearly-off-corpus; plausible refusals pass the gate and are declined model-side via the decline sentinel (EVAL-09 two-tier). A smarter gate (margin/relevance signal, Option 3) is a designated post-v1 improvement.",
+  "separation": {
+    "clearly_off_corpus_max": 0.211,
+    "answerable_min": 0.454,
+    "refusal_min": 0.569,
+    "refusal_max": 0.643,
+    "clean_gap_offcorpus_to_real": true,
+    "refusal_answerable_overlap": true
+  },
+  "bands": {
+    "clearly_off_corpus": [
+      {
+        "probe": "what is the best exercise for losing weight",
+        "top1": 0.152
+      },
+      {
+        "probe": "how do I file my taxes this year",
+        "top1": 0.186
+      },
+      {
+        "probe": "how do I change a flat tire on my car",
+        "top1": 0.189
+      },
+      {
+        "probe": "how do I make pizza dough from scratch",
+        "top1": 0.202
+      },
+      {
+        "probe": "what is the capital of France",
+        "top1": 0.211
+      }
+    ],
+    "answerable": [
+      {
+        "id": "a-04",
+        "top1": 0.454
+      },
+      {
+        "id": "a-18",
+        "top1": 0.522
+      },
+      {
+        "id": "a-09",
+        "top1": 0.562
+      },
+      {
+        "id": "a-17",
+        "top1": 0.615
+      },
+      {
+        "id": "a-16",
+        "top1": 0.63
+      },
+      {
+        "id": "a-05",
+        "top1": 0.636
+      },
+      {
+        "id": "a-10",
+        "top1": 0.648
+      },
+      {
+        "id": "a-07",
+        "top1": 0.65
+      },
+      {
+        "id": "a-03",
+        "top1": 0.659
+      },
+      {
+        "id": "a-11",
+        "top1": 0.666
+      },
+      {
+        "id": "a-06",
+        "top1": 0.67
+      },
+      {
+        "id": "a-15",
+        "top1": 0.696
+      },
+      {
+        "id": "a-01",
+        "top1": 0.701
+      },
+      {
+        "id": "a-20",
+        "top1": 0.705
+      },
+      {
+        "id": "a-08",
+        "top1": 0.711
+      },
+      {
+        "id": "a-14",
+        "top1": 0.719
+      },
+      {
+        "id": "a-02",
+        "top1": 0.721
+      },
+      {
+        "id": "a-12",
+        "top1": 0.732
+      },
+      {
+        "id": "a-19",
+        "top1": 0.769
+      },
+      {
+        "id": "a-13",
+        "top1": 0.81
+      }
+    ],
+    "refusal": [
+      {
+        "id": "r-02",
+        "top1": 0.569
+      },
+      {
+        "id": "r-01",
+        "top1": 0.609
+      },
+      {
+        "id": "r-04",
+        "top1": 0.614
+      },
+      {
+        "id": "r-05",
+        "top1": 0.618
+      },
+      {
+        "id": "r-03",
+        "top1": 0.643
+      }
+    ],
+    "boundary": [
+      {
+        "id": "b-02",
+        "top1": 0.548,
+        "expected": "refuse"
+      },
+      {
+        "id": "b-01",
+        "top1": 0.638,
+        "expected": "refuse"
+      },
+      {
+        "id": "b-03",
+        "top1": 0.713,
+        "expected": "answer"
+      }
+    ]
+  }
+}

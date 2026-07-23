@@ -85,12 +85,17 @@ export const config = {
   retrieval: {
     /** top-k for the similarity search. */
     k: 5,
-    /** Calibrated refusal threshold. See the Threshold type. */
+    /** Calibrated refusal threshold (P4.4, eval-harness §7). T sits in the clean
+     *  gap between clearly-off-corpus (~0.20) and real content (0.45+); the server
+     *  gate's honest job is clearly-off-corpus. Plausible off-corpus questions
+     *  (0.57-0.64) are not separable from weak answerables by cosine, so they pass
+     *  the gate and decline model-side via the sentinel (EVAL-09 two-tier).
+     *  Distributions committed in evals/calibration.json (EVAL-15). */
     threshold: {
-      status: "UNCALIBRATED",
-      value: null,
-      calibratedAt: null,
-      calibrationRunId: null,
+      status: "CALIBRATED",
+      value: 0.35,
+      calibratedAt: "2026-07-23",
+      calibrationRunId: "calibration-2026-07-23T21-22-50Z-ffc726",
     } satisfies Threshold as Threshold,
   },
 

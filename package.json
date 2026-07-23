@@ -17,7 +17,8 @@
     "ingest": "NODE_OPTIONS=--conditions=react-server tsx --env-file=.env.local scripts/ingest.ts",
     "retrieve": "NODE_OPTIONS=--conditions=react-server tsx --env-file=.env.local scripts/retrieve.ts",
     "prompt:preview": "NODE_OPTIONS=--conditions=react-server tsx --env-file=.env.local scripts/prompt-preview.ts",
-    "eval:retrieval": "NODE_OPTIONS=--conditions=react-server tsx --env-file=.env.local evals/run-retrieval.ts"
+    "eval:retrieval": "NODE_OPTIONS=--conditions=react-server tsx --env-file=.env.local evals/run-retrieval.ts",
+    "eval:calibrate": "NODE_OPTIONS=--conditions=react-server tsx --env-file=.env.local evals/calibrate.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.113.0",

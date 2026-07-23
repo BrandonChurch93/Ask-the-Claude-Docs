@@ -1,5 +1,21 @@
 import { describe, it, expect } from "vitest";
-import { buildMessages, renderSources, SYSTEM_INSTRUCTIONS } from "./prompt";
+import {
+  buildMessages,
+  renderSources,
+  SYSTEM_INSTRUCTIONS,
+  DECLINE_SENTINEL,
+} from "./prompt";
+
+describe("decline sentinel (rag-design §7, EVAL-09)", () => {
+  it("is the exact refusal copy and is required by the system prompt", () => {
+    expect(DECLINE_SENTINEL).toBe(
+      "The Claude Code documentation doesn't cover this.",
+    );
+    // The system prompt must instruct the model to begin with the sentinel, so
+    // eval detection (prefix check) and UI rendering key off one shared string.
+    expect(SYSTEM_INSTRUCTIONS).toContain(DECLINE_SENTINEL);
+  });
+});
 
 const sources = [
   { content: "Claude Code docs › A\n\nAlpha body" },
