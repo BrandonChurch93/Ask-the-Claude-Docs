@@ -13,13 +13,15 @@ Related docs: `architecture.md` (decision log), `eval-harness.md` (how this pipe
 
 - **v1 corpus:** Claude Code documentation only. Source of truth: `https://code.claude.com/docs/llms.txt` (the markdown index of all pages).
 - Discovery: fetch `llms.txt`, parse the linked page URLs. Each page serves raw markdown at its `.md` URL.
+- **Corpus scope:** the discovered set MINUS `config.corpus.excludedPagePatterns` (`changelog`, `whats-new/*`), applied at discovery so excluded pages are never ingested and the daily sync deletes any that were ingested before. *(Added 2026-07-23 at P4.3 per rule-1 authorization.)* Release-note content is high-volume and low-value for how-to questions, and grows every sync; excluding it at ingestion keeps the retrieval query a plain top-k (no HNSW post-filter or `ef_search` machinery). Accepted foreclosure: "what changed in week X" is out of scope for this how-to Q&A. The retrieval-time-filter alternative was rejected after being falsified twice — HNSW post-filters its approximate candidate set, and its candidate count is capped at `ef_search` — so a `WHERE`-clause exclusion returns fewer than `k` results when a query's nearest neighbours are all excluded.
 - The schema is multi-corpus from day one (`source` column); v1 populates a single source value `claude-code`.
 - **Known edge case:** not every listed URL is guaranteed to serve raw markdown. The changelog historically served rendered HTML on GitHub and serves markdown as of 2026-07 (verified across all 172 pages); validation is retained because any page could regress. Ingestion must validate each response before parsing.
 
 **Rules**
-- `RAG-01` Ingestion fetches only URLs discovered from `llms.txt`; no hardcoded page lists.
+- `RAG-01` Ingestion fetches only URLs discovered from `llms.txt`, minus `config.corpus.excludedPagePatterns` (applied at discovery); no hardcoded page lists.
 - `RAG-02` A fetched page is ingested only if the response is markdown (content sniff: response parses as markdown and is not an HTML document). Non-markdown pages are skipped and recorded in the sync log with the reason — never silently dropped, never HTML-scraped.
 - `RAG-03` Raw fetched markdown is stored per page (in the `documents` table) before any chunking, so chunking can be re-run without re-fetching.
+- `RAG-23` Excluded pages (`config.corpus.excludedPagePatterns`) are dropped at discovery, so they are never ingested and the diff planner deletes any that were ingested before. Because the corpus is scoped this way, retrieval is a plain top-k and coverage/chips are naturally clean (a defensive filter on the coverage query is belt-and-suspenders). Deleting chunks leaves dead HNSW graph entries, so the sync `VACUUM`s after any deletion, and the eval keeps a permanent under-return guard.
 
 ## 2. Chunking
 
@@ -111,6 +113,8 @@ Per query:
    - Chunks below `T` → excluded; returned to the client as near-misses (they render dimmed below the threshold rule), never sent to the model.
 4. If the context set is **empty**, the request is a **refusal**: no generation call is made. The server returns the refusal payload (near-misses, corpus coverage chips, receipt with embedding-only cost). Refusal is a server-side gate, deterministic and cheap — not a model behavior.
 5. Otherwise, assemble the prompt (§7) and stream generation.
+
+Retrieval runs a plain top-k (no exclusion filter): excluded pages are scoped out at ingestion (§1, `RAG-01`/`RAG-23`), so the corpus is already clean and HNSW needs no post-filter.
 
 **The threshold `T` is a calibrated value, never a borrowed one.** Similarity scores are relative to a corpus and model; published numbers from other systems are meaningless here. Calibration procedure and cadence are owned by `eval-harness.md` (§7 there); the resulting value lives in config with its calibration date. Until first calibration, the config value is marked `UNCALIBRATED` and the build-checklist blocks the refusal feature's completion on running the calibration.
 
