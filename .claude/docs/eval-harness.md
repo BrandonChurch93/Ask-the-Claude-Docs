@@ -58,7 +58,7 @@ Cost: query embeddings only (fractions of a cent). Runs on **every PR** and loca
 
 **Rules**
 - `EVAL-04` Retrieval evals import the production retrieval function and production config; zero parallel implementations (mirrors `RAG-18`).
-- `EVAL-05` Retrieval eval runs are deterministic given a fixed corpus snapshot: same inputs, same scores, byte-identical metric output.
+- `EVAL-05` Retrieval eval runs are deterministic given a fixed corpus snapshot. The determinism contract is byte-identical **metrics** (hit@5, MRR) and **chunk rankings**, so a changed number always means a changed system, never run-to-run jitter. Raw similarity scores are diagnostic detail, stored at 3 decimals and documented as carrying ~1e-5 external-API float noise: OpenAI's embedding endpoint is not bit-deterministic for identical input, so cosine scores wobble at the 5th–6th decimal without ever reordering results. Raw scores are therefore not part of the byte-identity contract. *(Amended 2026-07-23 per P4.2 rule-1 authorization; two-run evidence: metrics + rankings byte-identical, raw floats wobbling ~1e-5.)*
 - `EVAL-06` Retrieval evals run in CI on every pull request.
 
 ## 3. Answer evals (judged layer)
