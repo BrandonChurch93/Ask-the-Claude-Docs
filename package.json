@@ -15,9 +15,11 @@
     "check:secrets": "node scripts/check-secret-shapes.mjs",
     "db:migrate": "NODE_OPTIONS=--conditions=react-server tsx --env-file=.env.local scripts/db-migrate.ts",
     "ingest": "NODE_OPTIONS=--conditions=react-server tsx --env-file=.env.local scripts/ingest.ts",
-    "retrieve": "NODE_OPTIONS=--conditions=react-server tsx --env-file=.env.local scripts/retrieve.ts"
+    "retrieve": "NODE_OPTIONS=--conditions=react-server tsx --env-file=.env.local scripts/retrieve.ts",
+    "prompt:preview": "NODE_OPTIONS=--conditions=react-server tsx --env-file=.env.local scripts/prompt-preview.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "0.113.0",
     "js-tiktoken": "1.0.21",
     "next": "16.2.11",
     "openai": "6.48.0",
