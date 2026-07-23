@@ -4,6 +4,7 @@ import { retrieve, type ScoredChunk } from "../../../lib/rag/retriever";
 import { streamAnswer, selectedModel } from "../../../lib/rag/generator";
 import { encodeEvent } from "../../../lib/stream/encode";
 import { computeCostUsd } from "../../../lib/stream/cost";
+import { isSpendCapReached, recordSpend } from "../../../lib/spend";
 import { config } from "../../../lib/config";
 import type {
   ServerEvent,
@@ -48,6 +49,10 @@ const askRequestSchema = z
   })
   .strict();
 
+// ui-ux-spec §8 spend-cap copy (SEC-11: render the specified state, not a raw error).
+const SPEND_CAP_MESSAGE =
+  "This demo caps its own spending for the day. It resets at midnight UTC. The eval scores and source links still work while it rests.";
+
 function jsonError(status: number, type: string, message: string): Response {
   return new Response(JSON.stringify({ error: { type, message } }), {
     status,
@@ -88,6 +93,22 @@ export async function POST(req: Request): Promise<Response> {
     return jsonError(400, "invalid_request", message);
   }
   const question = parsed.data.question;
+
+  // SEC-10: global spend cap, checked before any generation and fail-closed.
+  // A reached cap or an unreadable/unwritable counter both reject with no
+  // generation call (ui-ux-spec §8 cap copy). The per-IP limiter is separate,
+  // in middleware.ts (fail-open).
+  try {
+    if (await isSpendCapReached()) {
+      return jsonError(429, "spend_cap", SPEND_CAP_MESSAGE);
+    }
+  } catch (err) {
+    console.error(
+      "spend cap check failed; failing closed:",
+      err instanceof Error ? err.message : "unknown error",
+    );
+    return jsonError(429, "spend_cap", SPEND_CAP_MESSAGE);
+  }
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream<Uint8Array>({
@@ -166,6 +187,17 @@ export async function POST(req: Request): Promise<Response> {
           costUsd: computeCostUsd(skeleton.model, final.usage ?? null),
         };
         send({ type: "done", receipt });
+        // SEC-10: accumulate this request's real cost into the daily counter.
+        // Best-effort (the spend already happened; writability was proven at the
+        // pre-generation check) and loud on failure.
+        try {
+          await recordSpend(receipt.costUsd);
+        } catch (err) {
+          console.error(
+            "spend accumulation write failed:",
+            err instanceof Error ? err.message : "unknown error",
+          );
+        }
         controller.close();
       } catch (err) {
         // Log length/outcome, never the question text (SEC-14) and no internals

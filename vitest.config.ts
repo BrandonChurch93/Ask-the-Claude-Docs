@@ -11,6 +11,9 @@ export default defineConfig({
       "lib/**/*.test.ts",
       "components/**/*.test.{ts,tsx}",
       "app/**/*.test.{ts,tsx}",
+      // middleware.ts must live at the repo root (Next.js requirement), so its
+      // test sits here too, outside the directory globs above.
+      "middleware.test.{ts,tsx}",
     ],
     // Dummy env so lib/env.ts parses at import; server-only guard neutralized below.
     setupFiles: ["./test/setup-env.ts"],

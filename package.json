@@ -20,6 +20,8 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "0.113.0",
+    "@upstash/ratelimit": "2.0.8",
+    "@upstash/redis": "1.38.0",
     "js-tiktoken": "1.0.21",
     "next": "16.2.11",
     "openai": "6.48.0",

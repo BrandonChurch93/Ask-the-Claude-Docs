@@ -3,15 +3,26 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 // Mocks are hoisted above the route import so its top-level imports resolve to
 // them. Neither the retriever nor the generator (both server-only) is loaded;
 // tests make zero network or paid-API calls (ENG-17).
-const { retrieveMock, streamAnswerMock } = vi.hoisted(() => ({
+const {
+  retrieveMock,
+  streamAnswerMock,
+  isSpendCapReachedMock,
+  recordSpendMock,
+} = vi.hoisted(() => ({
   retrieveMock: vi.fn(),
   streamAnswerMock: vi.fn(),
+  isSpendCapReachedMock: vi.fn(),
+  recordSpendMock: vi.fn(),
 }));
 
 vi.mock("../../../lib/rag/retriever", () => ({ retrieve: retrieveMock }));
 vi.mock("../../../lib/rag/generator", () => ({
   streamAnswer: streamAnswerMock,
   selectedModel: () => "claude-haiku-4-5",
+}));
+vi.mock("../../../lib/spend", () => ({
+  isSpendCapReached: isSpendCapReachedMock,
+  recordSpend: recordSpendMock,
 }));
 
 import { POST } from "./route";
@@ -62,6 +73,10 @@ function fakeGen(deltas: string[], usage: unknown) {
 beforeEach(() => {
   retrieveMock.mockReset();
   streamAnswerMock.mockReset();
+  isSpendCapReachedMock.mockReset();
+  recordSpendMock.mockReset();
+  isSpendCapReachedMock.mockResolvedValue(false); // under cap by default
+  recordSpendMock.mockResolvedValue(undefined);
 });
 
 describe("POST /api/ask (P3.3)", () => {
@@ -199,5 +214,61 @@ describe("POST /api/ask (P3.3)", () => {
     const res = await POST(makeReq({ question: "hel\u0000lo\tthere" }));
     await res.text(); // drain the stream
     expect(retrieveMock).toHaveBeenCalledWith("hellothere");
+  });
+
+  it("rejects with a typed 429 and no generation when the spend cap is reached (SEC-10)", async () => {
+    isSpendCapReachedMock.mockResolvedValue(true);
+    const res = await POST(makeReq({ question: "how do hooks work" }));
+    expect(res.status).toBe(429);
+    expect(res.headers.get("Cache-Control")).toBe("no-store");
+    const body = (await res.json()) as { error: { type: string } };
+    expect(body.error.type).toBe("spend_cap");
+    expect(retrieveMock).not.toHaveBeenCalled();
+    expect(streamAnswerMock).not.toHaveBeenCalled();
+  });
+
+  it("fails CLOSED (429, no generation) when the spend counter can't be read (SEC-10)", async () => {
+    isSpendCapReachedMock.mockRejectedValue(new Error("upstash down"));
+    const res = await POST(makeReq({ question: "how do hooks work" }));
+    expect(res.status).toBe(429);
+    const body = (await res.json()) as { error: { type: string } };
+    expect(body.error.type).toBe("spend_cap");
+    expect(retrieveMock).not.toHaveBeenCalled();
+    expect(streamAnswerMock).not.toHaveBeenCalled();
+  });
+
+  it("accumulates the answered request's real cost after generation (SEC-10)", async () => {
+    retrieveMock.mockResolvedValue({
+      contextSet: [scored("a", 0.7)],
+      nearMisses: [],
+      refused: false,
+      calibrated: false,
+      threshold: null,
+      results: [],
+      timings: { embedMs: 1, queryMs: 1, retrievalMs: 2 },
+    });
+    streamAnswerMock.mockReturnValue(
+      fakeGen(["ok"], { input_tokens: 100, output_tokens: 20 }),
+    );
+    const res = await POST(makeReq({ question: "how do hooks work" }));
+    await res.text(); // drain to completion so recordSpend runs
+    expect(recordSpendMock).toHaveBeenCalledTimes(1);
+    // (100 in @ $1/M + 20 out @ $5/M) = $0.0002
+    expect(recordSpendMock.mock.calls[0]![0]).toBeCloseTo(0.0002, 12);
+  });
+
+  it("does not accumulate spend on a refusal (RAG-13; embedding-only cost deferred to P4.4)", async () => {
+    retrieveMock.mockResolvedValue({
+      contextSet: [],
+      nearMisses: [scored("x", 0.1)],
+      refused: true,
+      calibrated: true,
+      threshold: 0.35,
+      results: [],
+      timings: { embedMs: 1, queryMs: 1, retrievalMs: 2 },
+    });
+    const res = await POST(makeReq({ question: "off corpus" }));
+    await res.text();
+    expect(recordSpendMock).not.toHaveBeenCalled();
   });
 });
