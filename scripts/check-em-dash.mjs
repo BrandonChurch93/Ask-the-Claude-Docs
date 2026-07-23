@@ -18,6 +18,12 @@ const EXCLUDE = [
   /\.woff2$/,
   /(^|\/)LICENSE(\.|$)/i,
   /(^|\/)package-lock\.json$/,
+  // Eval JSON fixtures are DATA, not product copy: test questions simulate real
+  // user input (which uses em dashes, per EVAL-01's natural-phrasing rule) and
+  // run artifacts embed model-generated answer text (already DS-14-exempt). Eval
+  // *code* (evals/*.ts) is still checked. Reconciles DS-14 with EVAL-01 for
+  // fixtures; flagged to Brandon at P4.1 (Tier 2).
+  /^evals\/.*\.json$/,
 ];
 
 // --cached --others --exclude-standard = tracked plus new (non-ignored) files,
