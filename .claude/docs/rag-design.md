@@ -129,7 +129,7 @@ Note for implementers: real cosine similarities from text-embedding-3-small typi
 
 Prompt structure (system + user, Anthropic Messages API):
 
-- **System prompt** states: answer only from the provided sources; every factual claim carries a citation marker `[n]` matching a source; if the sources do not contain the answer, say so plainly instead of answering (model-side backstop to the server-side gate — belt and suspenders); answer style (concise, technical, no preamble).
+- **System prompt** states: answer only from the provided sources; every factual claim carries a citation marker `[n]` matching a source; if the sources do not contain the answer, the response must **begin with the exact decline sentinel** `The Claude Code documentation doesn't cover this.` and nothing before it, instead of answering; answer style (concise, technical, no preamble). The sentinel is the model-side backstop to the server-side gate (belt and suspenders) and is a single string reused by eval detection and UI rendering (it matches the existing refusal copy). *(Sentinel added 2026-07-23 at P4.4 per rule-1 authorization; calibration showed plausible off-corpus questions are not separable from weak answerable ones by cosine, so the model-side decline carries the refusal load for them — see §6 and eval-harness §3.)*
 - **Sources block:** each context chunk rendered as `[n] {breadcrumb}\n{content}` in retrieval-score order, `n` starting at 1.
 - **User turn:** the question, verbatim, clearly delimited as untrusted input (see `security.md` for injection posture).
 

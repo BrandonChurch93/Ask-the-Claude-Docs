@@ -14,7 +14,7 @@ Two-tier quality bars where measurement exists: an **absolute floor** (minimum c
 | AC-01 | Retrieval hit@5 | eval harness | ≥ 0.85 floor AND ≥ baseline | EVAL §2, §5 |
 | AC-02 | Retrieval MRR | eval harness | ≥ 0.60 floor AND ≥ baseline | EVAL §2 |
 | AC-03 | Judged answer pass rate | eval harness, noise-margined | ≥ 0.80 floor AND ≥ (baseline − M) | EVAL §3–5 |
-| AC-04 | Refusal questions | server-metadata assertion | 5/5 correctly declined | EVAL §3, RAG-13 |
+| AC-04 | Refusal questions | server metadata OR decline-sentinel prefix (two-tier, deterministic) | 5/5 correctly declined | EVAL §3, RAG-13 |
 | AC-05 | Boundary questions | eval harness | each matches its recorded expectation | EVAL §1 |
 | AC-06 | Threshold calibrated | config inspection | `T` carries `calibrated_at` + run ID; distributions committed | EVAL §7, RAG-15 |
 | AC-07 | Zero uncited factual claims in judged answers | `citations-valid` + `grounded` checks | zero failures in the acceptance run | EVAL §3 |

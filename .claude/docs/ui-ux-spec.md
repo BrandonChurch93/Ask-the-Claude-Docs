@@ -97,7 +97,13 @@ All receipt numbers are the server-measured, usage-derived values (`PERF-06`, `R
 
 ## 7. The refusal state
 
-Same turn anatomy, calm register, zero error styling:
+There are **two species of decline** (P4.4 amendment, rule-1 authorized), because calibration showed plausible off-corpus questions are not separable from weak answerable ones by cosine and so pass the server gate:
+
+**(a) Server refusal** — the gate declined (nothing cleared `T`, no generation call). The full refusal state below, rendered from the refusal payload. This fires for clearly-off-corpus questions (e.g. "pizza dough").
+
+**(b) Model-side decline** — the question passed the gate but the model found the sources insufficient and began its response with the decline sentinel `The Claude Code documentation doesn't cover this.`. Detected by the sentinel prefix on the stream; rendered as a decline (not a full answer), but with its **honest generation receipt** (a real model call happened: tokens + cost shown, not the embedding-only refusal receipt). Spec details land at P5; the sentinel detection and the two-species reducer states are part of P5.1.
+
+Both share the same calm register and copy. **Server refusal** state:
 
 > **{question}**
 > The Claude Code documentation doesn't cover this. *(serif, answer-size)*
@@ -105,7 +111,7 @@ Same turn anatomy, calm register, zero error styling:
 
 Then one bordered block: centered rule `nearest sections · none cleared {T}`, followed by the near-miss rows (ink-soft, `excluded` tag, mono scores). Then "The corpus does cover" with topic chips (pill buttons from sync-derived coverage, `RAG-21`); clicking a chip submits `Tell me about {topic}`. Then the bare receipt line: `declined · {ms} ms · ${cost}` (embedding-only cost, displayed proudly).
 
-- `UX-09` Refusals render only from the refusal payload; no generation artifacts, no red, no warning iconography.
+- `UX-09` Refusals render only from the refusal payload (server refusal) or the sentinel-detected decline; no generation artifacts beyond the honest receipt, no red, no warning iconography.
 
 ## 8. Error, rate-limit, and cap states (not in the mock; normative here)
 

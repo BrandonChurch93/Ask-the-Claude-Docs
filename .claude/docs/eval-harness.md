@@ -78,12 +78,12 @@ For every `answerable` question that clears retrieval: run the full production q
 
 The judge prompt receives: the question, the exact sources the generator saw, and the answer. It returns strict JSON (one object, four booleans, a one-line reason per failure). Judge prompt lives beside the harness code and is versioned; changing it invalidates baseline comparisons and requires re-baselining (§5).
 
-**Refusal scoring** is deterministic, not judged: for `refusal` questions, pass = the server-side gate declined (no generation call occurred, per `RAG-13`). The harness asserts this from the response metadata. `boundary` questions score against their per-question expected behavior.
+**Refusal scoring** is deterministic (not judged), two-tier: for `refusal` questions, pass = the server-side gate declined (no generation call occurred, per `RAG-13`) **OR** the generated response begins with the decline sentinel `The Claude Code documentation doesn't cover this.` (exact-prefix check). Both tiers are deterministic. Calibration (P4.4) showed plausible off-corpus questions score in the answerable band and so pass the gate; the model then declines via the sentinel, and the second tier catches that. The judged `no-fabrication` check remains the backstop for a sentinel miss (a model that answers instead of declining fails there). `boundary` questions score against their per-question expected behavior, same two-tier decline detection. *(Two-tier amendment 2026-07-23 at P4.4 per rule-1 authorization.)*
 
 **Rules**
 - `EVAL-07` Judge model is a stronger tier than the generation model under test.
 - `EVAL-08` Rubric checks are binary; the judge returns machine-parseable JSON; unparseable judge output is a harness error, never silently scored.
-- `EVAL-09` Refusal correctness is asserted from server metadata (generation call count = 0), not judged by an LLM.
+- `EVAL-09` Refusal correctness is asserted deterministically: server metadata (generation call count = 0) OR the exact decline-sentinel prefix on the response. Not judged by an LLM; the judged `no-fabrication` check is the backstop for sentinel misses.
 
 ## 4. Noise measurement
 
