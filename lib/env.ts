@@ -33,6 +33,11 @@ const envSchema = z.object({
 
   // Server-only, non-secret. Portfolio link rendered in the footer (UX-13).
   PORTFOLIO_URL: z.url("must be a valid URL"),
+
+  // The site's own public origin, for metadataBase (canonical + OG/Twitter URLs,
+  // ENG-15). Optional with a localhost fallback so local/CI boot without it; set
+  // it in Vercel at deploy (P8.1 env list). Distinct from PORTFOLIO_URL.
+  SITE_URL: z.url("must be a valid URL").optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;
