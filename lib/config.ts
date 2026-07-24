@@ -167,6 +167,21 @@ export const config = {
   spend: {
     dailyCapUsd: 1.0,
   },
+
+  /** Eval-harness CI guards (eval-harness §5-6). `ciMonthlySoftCapUsd` is a SOFT
+   *  cap on the judged suite's CI spend (Tier 2 extension of EVAL-13, Brandon,
+   *  P4.6): each judged run records its token-math estimated cost into its run
+   *  artifact; when the calendar month's accumulated estimate exceeds this cap,
+   *  an auto-triggered judged job posts a loud warning and requires manual
+   *  dispatch instead of firing. A soft stop against flaky-rerun and
+   *  iteration-day pileups, never a hard gate on a real regression check. */
+  evals: {
+    ciMonthlySoftCapUsd: 5.0,
+    /** AC-03 hard floor: the judged answer pass rate must stay at or above this
+     *  (success-criteria.md AC-03). The regression gate fails below it even when
+     *  the drop is within the noise margin M. */
+    answerPassFloor: 0.8,
+  },
 } as const;
 
 export type Config = typeof config;

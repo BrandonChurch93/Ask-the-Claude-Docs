@@ -97,6 +97,7 @@ describe("aggregateAnswers", () => {
       ],
       refusals: [],
       boundary: [],
+      estimatedCostUsd: 0,
     };
     const agg = aggregateAnswers(run);
     expect(agg.pass_rate).toBe(0.5);
@@ -112,6 +113,7 @@ describe("computeNoise (EVAL-10)", () => {
       answers: passed.map((p, i) => ans(`a-${i}`, p, verdict({ complete: p }))),
       refusals: [],
       boundary: [],
+      estimatedCostUsd: 0,
     });
     const noise = computeNoise([
       mk([true, true, true, true]),
@@ -130,6 +132,7 @@ describe("computeNoise (EVAL-10)", () => {
       answers: [ans("a-0", true, verdict()), ans("a-1", true, verdict())],
       refusals: [],
       boundary: [],
+      estimatedCostUsd: 0,
     };
     const noise = computeNoise([stable, stable, stable]);
     expect(noise.aggregate_spread).toBe(0);

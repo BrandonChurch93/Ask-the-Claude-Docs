@@ -4,9 +4,15 @@ import path from "node:path";
 import type Anthropic from "@anthropic-ai/sdk";
 
 import { retrieve } from "../../lib/rag/retriever";
-import { streamAnswer } from "../../lib/rag/generator";
+import { streamAnswer, selectedModel } from "../../lib/rag/generator";
 import { renderSources, DECLINE_SENTINEL } from "../../lib/rag/prompt";
-import { callJudge, JUDGE_CHECKS, type JudgeVerdict } from "./judge";
+import { computeCostUsd, type TokenUsage } from "../../lib/stream/cost";
+import {
+  callJudge,
+  JUDGE_MODEL,
+  JUDGE_CHECKS,
+  type JudgeVerdict,
+} from "./judge";
 
 /**
  * The judged answer layer + two-tier refusal scoring (eval-harness §3). For each
@@ -40,6 +46,9 @@ export interface JudgedRun {
   answers: AnswerResult[];
   refusals: DeclineResult[];
   boundary: DeclineResult[];
+  /** Token-math cost of this run (generations + judge calls), priced from
+   *  config.pricing. Feeds the CI monthly soft cap (EVAL-13 extension). */
+  estimatedCostUsd: number;
 }
 
 /** An answer passes only if all four binary checks are true. */
@@ -77,13 +86,14 @@ interface TestQuestion {
 async function generateText(
   question: string,
   sources: { content: string }[],
-): Promise<string> {
+): Promise<{ text: string; usage: TokenUsage }> {
   const stream = streamAnswer(question, sources);
   const msg = await stream.finalMessage();
-  return msg.content
+  const text = msg.content
     .filter((b): b is Anthropic.TextBlock => b.type === "text")
     .map((b) => b.text)
     .join("");
+  return { text, usage: msg.usage };
 }
 
 /** One full judged pass over the test set (live generation + judge). */
@@ -95,6 +105,8 @@ export async function runJudgedEval(): Promise<JudgedRun> {
   const answers: AnswerResult[] = [];
   const refusals: DeclineResult[] = [];
   const boundary: DeclineResult[] = [];
+  const genModel = selectedModel();
+  let estimatedCostUsd = 0;
 
   for (const q of testset.questions) {
     const outcome = await retrieve(q.question);
@@ -110,21 +122,26 @@ export async function runJudgedEval(): Promise<JudgedRun> {
         continue;
       }
       const answer = await generateText(q.question, outcome.contextSet);
+      estimatedCostUsd += computeCostUsd(genModel, answer.usage);
       const sourcesText = renderSources(outcome.contextSet);
-      const verdict = await callJudge(q.question, sourcesText, answer);
+      const judged = await callJudge(q.question, sourcesText, answer.text);
+      estimatedCostUsd += computeCostUsd(JUDGE_MODEL, judged.usage);
       answers.push({
         id: q.id,
-        passed: answerPasses(verdict),
-        verdict,
+        passed: answerPasses(judged.verdict),
+        verdict: judged.verdict,
         server_refused: false,
       });
       continue;
     }
 
     // refusal or boundary: two-tier decline detection.
-    const text = outcome.refused
-      ? ""
-      : await generateText(q.question, outcome.contextSet);
+    let text = "";
+    if (!outcome.refused) {
+      const gen = await generateText(q.question, outcome.contextSet);
+      estimatedCostUsd += computeCostUsd(genModel, gen.usage);
+      text = gen.text;
+    }
     const { declined, via } = declineOutcome(outcome.refused, text);
     const rec: DeclineResult = {
       id: q.id,
@@ -137,7 +154,7 @@ export async function runJudgedEval(): Promise<JudgedRun> {
     (q.category === "refusal" ? refusals : boundary).push(rec);
   }
 
-  return { answers, refusals, boundary };
+  return { answers, refusals, boundary, estimatedCostUsd };
 }
 
 export interface AnswerAggregate {
