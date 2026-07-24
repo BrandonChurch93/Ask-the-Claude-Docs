@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 
 import { env } from "../../lib/env";
+import type { TokenUsage } from "../../lib/stream/cost";
 
 /**
  * The judged answer layer (eval-harness §3). A stronger tier than the generator
@@ -87,12 +88,13 @@ function getClient(): Anthropic {
   return client;
 }
 
-/** Call the judge for one answer and return its parsed verdict. */
+/** Call the judge for one answer; return its parsed verdict + the API usage (for
+ *  the run artifact's token-math cost estimate, EVAL-13 CI soft cap). */
 export async function callJudge(
   question: string,
   sourcesText: string,
   answer: string,
-): Promise<JudgeVerdict> {
+): Promise<{ verdict: JudgeVerdict; usage: TokenUsage }> {
   const msg = await getClient().messages.create({
     model: JUDGE_MODEL,
     max_tokens: JUDGE_MAX_TOKENS,
@@ -109,5 +111,5 @@ export async function callJudge(
     .filter((b): b is Anthropic.TextBlock => b.type === "text")
     .map((b) => b.text)
     .join("");
-  return parseJudgeVerdict(text);
+  return { verdict: parseJudgeVerdict(text), usage: msg.usage };
 }
