@@ -45,6 +45,13 @@ describe("security headers", () => {
     expect(contentSecurityPolicy).not.toMatch(/https?:\/\//);
   });
 
+  it("ships strict script-src outside development: no 'unsafe-eval' (ruling 4)", () => {
+    // Tests run under NODE_ENV=test, i.e. the non-dev (shipped) posture. The
+    // dev-only HMR relaxation must never reach production or the test build.
+    expect(process.env.NODE_ENV).not.toBe("development");
+    expect(contentSecurityPolicy).not.toContain("'unsafe-eval'");
+  });
+
   it("applies security headers globally and no-store to the API (ENG-14)", () => {
     const config = securityHeadersConfig();
     const global = config.find((c) => c.source === "/:path*");

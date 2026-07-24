@@ -13,12 +13,23 @@
  * i.e. 'unsafe-inline' on script-src. This is not an origin, so SEC-13 (no
  * wildcard/external origins) holds; the XSS vector is closed independently by
  * SEC-06/07 (no dangerouslySetInnerHTML; output rendered only as React text).
+ *
+ * Dev-only relaxation (P5.1 review, ruling 4): under `next dev` (NODE_ENV
+ * "development") Next's HMR / Fast Refresh compiles modules with eval(), which a
+ * strict script-src blocks (a console CSP error while developing). We add
+ * 'unsafe-eval' for development ONLY; production and test ship strict, without
+ * it, so the shipped security posture is unchanged.
  */
 
 // CSP directives (SEC §5). No wildcard and no external origins (SEC-13).
+const scriptSrc =
+  process.env.NODE_ENV === "development"
+    ? "'self' 'unsafe-inline' 'unsafe-eval'" // HMR eval() in dev only
+    : "'self' 'unsafe-inline'"; // minimal Next inline allowance (see note)
+
 const CSP_DIRECTIVES: Record<string, string> = {
   "default-src": "'self'",
-  "script-src": "'self' 'unsafe-inline'", // minimal Next inline allowance (see note)
+  "script-src": scriptSrc,
   "style-src": "'self' 'unsafe-inline'", // CSS Modules inject styles; accepted per SEC §5
   "img-src": "'self' data:",
   "font-src": "'self'", // self-hosted fonts (PERF-04) keep this origin-free
