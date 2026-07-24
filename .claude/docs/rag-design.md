@@ -134,9 +134,11 @@ Prompt structure (system + user, Anthropic Messages API):
 - **User turn:** the question, verbatim, clearly delimited as untrusted input (see `security.md` for injection posture).
 
 Response protocol (SSE):
-1. First event: `sources` — the ordered array of context chunks (id, breadcrumb, url + anchor, similarity, snippet) plus near-misses and the receipt skeleton. Sent **before** any generated token, so the client can resolve `[n]` markers the moment they stream in.
+1. First event: `sources` — the ordered array of context chunks (id, breadcrumb, url + anchor, similarity, snippet) plus near-misses and the receipt skeleton. Sent **before** any generated token, so the client can resolve `[n]` markers the moment they stream in. The receipt skeleton also carries `retrieval: {embedMs, queryMs}` and `corpusChunks` (see the extension note below).
 2. Then: `text` deltas from the generation stream.
-3. Final event: `done` — completed receipt: model, latency, token usage, computed cost from the API response's usage object (never an estimate).
+3. Final event: `done` — completed receipt: model, latency, token usage, computed cost from the API response's usage object (never an estimate). Being a superset of the skeleton, it inherits `retrieval`/`corpusChunks`, so the early and final retrieval numbers stay consistent.
+
+**SSE-contract extension (P5.1, Tier 3, Brandon-authorized).** The `sources` event's receipt skeleton gained two fields: `retrieval: {embedMs, queryMs}` (the retrieval timings, already measured route-side at the emit point) and `corpusChunks` (total chunks searched, sourced from the RAG-21 corpus stats, cached off the latency path). Rationale: `ui-ux-spec.md` §5 requires the retrieving choreography to narrate *this one event's payload, never a second data source* — its first two stages are `✓ embedded · {ms}` and `✓ searched {chunks} chunks · {ms}`, whose values did not previously ride the `sources` event. Front-loading the retrieval slice into the skeleton keeps the choreography a single-event narration; the `done` Receipt's full `Timings` is unchanged (superset).
 
 - Generation model: `claude-haiku-4-5` default; `claude-sonnet-4-6` behind config flag. Max output tokens from config.
 - A `[n]` marker with no corresponding source is a defect (eval-harness checks this as `citations-valid`).

@@ -8,11 +8,13 @@ const {
   streamAnswerMock,
   isSpendCapReachedMock,
   recordSpendMock,
+  getCorpusStatsMock,
 } = vi.hoisted(() => ({
   retrieveMock: vi.fn(),
   streamAnswerMock: vi.fn(),
   isSpendCapReachedMock: vi.fn(),
   recordSpendMock: vi.fn(),
+  getCorpusStatsMock: vi.fn(),
 }));
 
 vi.mock("../../../lib/rag/retriever", () => ({ retrieve: retrieveMock }));
@@ -23,6 +25,9 @@ vi.mock("../../../lib/rag/generator", () => ({
 vi.mock("../../../lib/spend", () => ({
   isSpendCapReached: isSpendCapReachedMock,
   recordSpend: recordSpendMock,
+}));
+vi.mock("../../../lib/db/queries", () => ({
+  getCorpusStats: getCorpusStatsMock,
 }));
 
 import { POST } from "./route";
@@ -95,6 +100,7 @@ beforeEach(() => {
   recordSpendMock.mockReset();
   isSpendCapReachedMock.mockResolvedValue(false); // under cap by default
   recordSpendMock.mockResolvedValue(undefined);
+  getCorpusStatsMock.mockResolvedValue({ documents: 312, chunks: 3214 });
 });
 
 describe("POST /api/ask (P3.3)", () => {
