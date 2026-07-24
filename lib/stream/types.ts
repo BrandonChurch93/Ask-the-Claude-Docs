@@ -55,6 +55,19 @@ export interface ReceiptSkeleton {
   calibrated: boolean;
   threshold: number | null;
   refused: boolean;
+  /**
+   * Retrieval timings known already at the `sources` event, so the ui-ux-spec §5
+   * choreography narrates this ONE event and never reaches for a second data
+   * source (P5.1 Tier-3 SSE-contract extension). The `done` Receipt's full
+   * `Timings` is a superset, so `embedMs`/`queryMs` stay consistent by inheritance.
+   */
+  retrieval: { embedMs: number; queryMs: number };
+  /**
+   * Total corpus chunks searched (a RAG-21 corpus fact) for the choreography's
+   * "searched {n} chunks" stage. Sourced in-event, not from the coverage endpoint,
+   * so the choreography stays a single-event narration (§5).
+   */
+  corpusChunks: number;
 }
 
 /** The completed receipt sent in the `done` event. */

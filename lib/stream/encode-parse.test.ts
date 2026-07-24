@@ -21,6 +21,8 @@ const events: ServerEvent[] = [
       calibrated: false,
       threshold: null,
       refused: false,
+      retrieval: { embedMs: 1, queryMs: 2 },
+      corpusChunks: 3214,
     },
   },
   { type: "text", delta: "Hello " },
@@ -32,6 +34,8 @@ const events: ServerEvent[] = [
       calibrated: false,
       threshold: null,
       refused: false,
+      retrieval: { embedMs: 1, queryMs: 2 },
+      corpusChunks: 3214,
       timings: {
         embedMs: 1,
         queryMs: 2,

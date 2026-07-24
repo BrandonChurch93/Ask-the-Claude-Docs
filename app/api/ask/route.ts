@@ -3,8 +3,13 @@ import { z } from "zod";
 import { retrieve, type ScoredChunk } from "../../../lib/rag/retriever";
 import { streamAnswer, selectedModel } from "../../../lib/rag/generator";
 import { encodeEvent } from "../../../lib/stream/encode";
+import {
+  STREAM_INTERRUPTED,
+  REQUEST_FAILED,
+} from "../../../lib/stream/messages";
 import { computeCostUsd } from "../../../lib/stream/cost";
 import { isSpendCapReached, recordSpend } from "../../../lib/spend";
+import { getCorpusStats } from "../../../lib/db/queries";
 import { config } from "../../../lib/config";
 import type {
   ServerEvent,
@@ -140,13 +145,23 @@ export async function POST(req: Request): Promise<Response> {
       const t0 = performance.now();
       let firstTokenAt: number | null = null;
       try {
-        const outcome = await retrieve(question);
+        // Corpus size resolves concurrently with retrieval so the choreography's
+        // in-event chunk count adds no sequential latency (cached after warm).
+        const [outcome, corpusStats] = await Promise.all([
+          retrieve(question),
+          getCorpusStats(),
+        ]);
 
         const skeleton: ReceiptSkeleton = {
           model: selectedModel(),
           calibrated: outcome.calibrated,
           threshold: outcome.threshold,
           refused: outcome.refused,
+          retrieval: {
+            embedMs: outcome.timings.embedMs,
+            queryMs: outcome.timings.queryMs,
+          },
+          corpusChunks: corpusStats.chunks,
         };
 
         // retrieval_ms: validated → sources emitted (measured at the emit point).
@@ -245,9 +260,7 @@ export async function POST(req: Request): Promise<Response> {
         );
         send({
           type: "error",
-          message: textStarted
-            ? "The answer was interrupted. What streamed is above; nothing after it was lost, because nothing after it arrived."
-            : "Something went wrong reaching the model. Your question wasn't charged. Try again.",
+          message: textStarted ? STREAM_INTERRUPTED : REQUEST_FAILED,
           retryable: true,
         });
         closeStream();

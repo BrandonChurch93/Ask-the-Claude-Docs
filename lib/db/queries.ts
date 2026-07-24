@@ -241,6 +241,38 @@ export async function countExcludedChunks(): Promise<number> {
   return row?.count ?? 0;
 }
 
+/**
+ * Corpus size (RAG-21): document + chunk counts, the single source of truth for
+ * the choreography's "searched {n} chunks" stage and the P5.2 eyebrow. The count
+ * changes only on the daily sync, and `sync_runs` stores deltas rather than a
+ * running total, so this is the sanctioned cached-count fallback (P5.1, Brandon):
+ * a short-TTL module cache keeps it off the per-request latency path (the route
+ * resolves it concurrently with retrieval), refreshed lazily after the TTL.
+ */
+export interface CorpusStats {
+  documents: number;
+  chunks: number;
+}
+const CORPUS_STATS_TTL_MS = 5 * 60 * 1000;
+let corpusStatsCache: { value: CorpusStats; at: number } | null = null;
+
+export async function getCorpusStats(
+  now: number = Date.now(),
+): Promise<CorpusStats> {
+  if (corpusStatsCache && now - corpusStatsCache.at < CORPUS_STATS_TTL_MS)
+    return corpusStatsCache.value;
+  const [row] = await sql<CorpusStats[]>`
+    select
+      (select count(*)::int from documents) as documents,
+      (select count(*)::int from chunks) as chunks`;
+  const value: CorpusStats = {
+    documents: row?.documents ?? 0,
+    chunks: row?.chunks ?? 0,
+  };
+  corpusStatsCache = { value, at: now };
+  return value;
+}
+
 /** The freshness timestamp: most recent sync (RAG §9.5 `synced_at` max). */
 export async function getFreshness(): Promise<Date | null> {
   const [row] = await sql<{ syncedAt: Date | null }[]>`
