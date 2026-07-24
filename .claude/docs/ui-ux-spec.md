@@ -101,7 +101,11 @@ There are **two species of decline** (P4.4 amendment, rule-1 authorized), becaus
 
 **(a) Server refusal** — the gate declined (nothing cleared `T`, no generation call). The full refusal state below, rendered from the refusal payload. This fires for clearly-off-corpus questions (e.g. "pizza dough").
 
-**(b) Model-side decline** — the question passed the gate but the model found the sources insufficient and began its response with the decline sentinel `The Claude Code documentation doesn't cover this.`. Detected by the sentinel prefix on the stream; rendered as a decline (not a full answer), but with its **honest generation receipt** (a real model call happened: tokens + cost shown, not the embedding-only refusal receipt). Spec details land at P5; the sentinel detection and the two-species reducer states are part of P5.1.
+**(b) Model-side decline** — the question passed the gate but the model found the sources insufficient and began its response with the decline sentinel `The Claude Code documentation doesn't cover this.`. Detected by the sentinel prefix on the stream; rendered as a decline (not a full answer). The sentinel detection and the two-species reducer states shipped in P5.1; three P5.1 desk-review rulings govern its rendering at P5.3/P5.4 (Brandon, rule-1):
+
+- It **carries its sources module** (§6.2), exactly like an answer. The model referenced retrieved sections to decide it could not answer, so that evidence must stay visible — a decline is not a reason to hide the sources it was reasoning over.
+- Its receipt reads **`declined`**, the same word as a server refusal. "Model-side decline" is internal vocabulary and is **never user-facing**; the two species are distinguished honestly by their numbers, not a label — the model-side decline shows its real generation receipt (tokens + cost), the server refusal shows the embedding-only receipt below.
+- It therefore shows `declined · {ms} ms · ${cost}` with the real, usage-derived generation cost (a model call did happen), never `embedding only`.
 
 Both share the same calm register and copy. **Server refusal** state:
 
@@ -109,7 +113,7 @@ Both share the same calm register and copy. **Server refusal** state:
 > The Claude Code documentation doesn't cover this. *(serif, answer-size)*
 > Nothing retrieved cleared the confidence threshold, so no answer was generated. *(sans 14, ink-soft)*
 
-Then one bordered block: centered rule `nearest sections · none cleared {T}`, followed by the near-miss rows (ink-soft, `excluded` tag, mono scores). Then "The corpus does cover" with topic chips (pill buttons from sync-derived coverage, `RAG-21`); clicking a chip submits `Tell me about {topic}`. Then the bare receipt line: `declined · {ms} ms · ${cost}` (embedding-only cost, displayed proudly).
+Then one bordered block: centered rule `nearest sections · none cleared {T}`, followed by the near-miss rows (ink-soft, `excluded` tag, mono scores). Then "The corpus does cover" with topic chips (pill buttons from sync-derived coverage, `RAG-21`); clicking a chip submits `Tell me about {topic}`. Then the bare receipt line: `declined · {ms} ms · embedding only`. A server refusal makes no generation call, so there is no dollar cost to show — the real embedding cost rounds to `$0.0000`, and `embedding only` states that honestly. *(P5.1 review correction, Brandon: the v10 mock's `$0.0002` was incorrect math; the refusal cost field is replaced by `embedding only`, not a dollar amount.)*
 
 - `UX-09` Refusals render only from the refusal payload (server refusal) or the sentinel-detected decline; no generation artifacts beyond the honest receipt, no red, no warning iconography.
 
