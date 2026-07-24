@@ -180,8 +180,10 @@ async function main() {
       answers_pass_rate: null,
     };
   }
-  const { runPath } = writeArtifact(artifact);
-  console.log(`artifact: ${runPath}`);
+  const { runPath, latestUpdated } = writeArtifact(artifact);
+  console.log(
+    `artifact: ${runPath}${latestUpdated ? " (latest.json updated)" : " (retrieval-only; latest.json preserved)"}`,
+  );
 
   if (retrievalVerdict.regressed || judgedRegressed) {
     console.error("\nEVAL GATE FAILED (EVAL-11).");

@@ -114,14 +114,26 @@ export function buildArtifact(
   };
 }
 
-/** Write evals/runs/{run_id}.json and update evals/latest.json (EVAL-16 source). */
-export function writeArtifact(artifact: RunArtifact): { runPath: string } {
-  const evalsDir = path.join(process.cwd(), "evals");
+/**
+ * Write evals/runs/{run_id}.json for EVERY run, and update evals/latest.json ONLY
+ * for a full run (§8: "every FULL run ... updates latest.json"). A run is full
+ * when the judged layer ran, which the artifact encodes as the presence of its
+ * `answers` section. A retrieval-only run (path-filter miss, or a soft-capped
+ * judged trigger) records its own run artifact but must NOT clobber the last full
+ * latest.json that /evals renders (EVAL-16) - otherwise a docs/UI merge would blank
+ * the judged numbers on the page until the next pipeline change. `evalsDir` is a
+ * seam for tests; production uses <cwd>/evals.
+ */
+export function writeArtifact(
+  artifact: RunArtifact,
+  evalsDir: string = path.join(process.cwd(), "evals"),
+): { runPath: string; latestUpdated: boolean } {
   const runsDir = path.join(evalsDir, "runs");
   mkdirSync(runsDir, { recursive: true });
   const json = JSON.stringify(artifact, null, 2) + "\n";
   const runPath = path.join(runsDir, `${artifact.run_id}.json`);
   writeFileSync(runPath, json);
-  writeFileSync(path.join(evalsDir, "latest.json"), json);
-  return { runPath };
+  const isFullRun = artifact.answers !== undefined;
+  if (isFullRun) writeFileSync(path.join(evalsDir, "latest.json"), json);
+  return { runPath, latestUpdated: isFullRun };
 }
