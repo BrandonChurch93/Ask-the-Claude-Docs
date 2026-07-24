@@ -281,6 +281,34 @@ export async function getFreshness(): Promise<Date | null> {
 }
 
 /**
+ * Everything the sync eyebrow + freshness popover render (ui-ux-spec §3, RAG-21):
+ * last-sync time, corpus size, and how many chunks the most recent successful
+ * sync changed. All derived from stored data, never hardcoded. Reuses the cached
+ * getCorpusStats for the counts (the single corpus-size source of truth).
+ */
+export interface SyncSummary {
+  syncedAt: Date | null;
+  pages: number;
+  chunks: number;
+  updated: number;
+}
+export async function getSyncSummary(): Promise<SyncSummary> {
+  const stats = await getCorpusStats();
+  const [freshness] = await sql<{ syncedAt: Date | null }[]>`
+    select max(synced_at) as "syncedAt" from documents`;
+  const [last] = await sql<{ updated: number }[]>`
+    select (chunks_added + chunks_updated)::int as updated
+    from sync_runs where status = 'success'
+    order by started_at desc limit 1`;
+  return {
+    syncedAt: freshness?.syncedAt ?? null,
+    pages: stats.documents,
+    chunks: stats.chunks,
+    updated: last?.updated ?? 0,
+  };
+}
+
+/**
  * Write one sync-log row (RAG-22). Skips are persisted with their reasons
  * (RAG-02), never silently dropped.
  */

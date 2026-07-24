@@ -1,0 +1,89 @@
+/* Header (ui-ux-spec §2, design-system §4-6). Not sticky. */
+.top {
+  border-bottom: 1px solid var(--line);
+}
+.inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 15px 24px;
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+}
+.wordmark {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 600;
+  margin-right: auto;
+}
+.nav {
+  display: flex;
+  gap: 18px;
+  align-items: baseline;
+  font-size: 13px;
+}
+
+/* Nav link underline-sweep (DS §6.2). */
+.link {
+  color: var(--accent);
+  text-decoration: none;
+  position: relative;
+}
+.link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: -3px;
+  border-top: 1px solid var(--accent);
+  transition: right var(--t-fast) var(--ease);
+}
+.link:hover::after,
+.link:focus-visible::after {
+  right: 0;
+}
+
+/* Nav divider: 1x14 --line-graphic block (§2.4 correction 2). */
+.divider {
+  width: 1px;
+  height: 14px;
+  background: var(--line-graphic);
+  align-self: center;
+}
+
+.history {
+  font-size: 13px;
+  background: none;
+  border: none;
+  color: var(--ink-soft);
+  padding: 2px 0;
+  transition: color var(--t-fast);
+}
+.history:disabled {
+  color: var(--ink-muted);
+  cursor: default;
+}
+
+/* Retrieval-details toggle: the one bordered header control (§2, §5 borders). */
+.pin {
+  font-size: 12.5px;
+  border: 1px solid var(--line-graphic);
+  background: var(--card);
+  border-radius: 8px;
+  padding: 6px 14px;
+  color: var(--ink-soft);
+  transition:
+    border-color var(--t-fast),
+    color var(--t-fast),
+    transform var(--t-fast) var(--ease);
+}
+.pin:disabled {
+  cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .link::after,
+  .pin {
+    transition: none;
+  }
+}
