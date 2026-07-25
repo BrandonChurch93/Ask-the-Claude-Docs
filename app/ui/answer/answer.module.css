@@ -1,0 +1,276 @@
+/*
+ * Answer state (ui-ux-spec §5-6; design-system §6.2 motion catalog). Translated
+ * from the v10 mock to the tokens with the §2.4 corrections: the threshold rule
+ * uses --line-graphic, excluded rows are solid --ink-soft plus the word
+ * "excluded" (no opacity on text). Only transform/opacity animate, plus the one
+ * sanctioned sources-grid expansion (PERF-13). Reduced motion disables all of it.
+ */
+
+.turn {
+  margin-top: 52px;
+  scroll-margin-top: 56px;
+}
+
+/* --- Retrieving choreography (real DOM, A11Y-15) --- */
+.choreo {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+}
+.stageLine {
+  line-height: 2;
+  animation: fadeRise var(--t-base) var(--ease) both;
+}
+.cSrc {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  color: var(--ink);
+  padding: 5px 8px;
+  border-radius: 6px;
+  animation: fadeRise var(--t-base) var(--ease) both;
+}
+.cDim {
+  color: var(--ink-soft);
+}
+.cScore {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+.excluded {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-muted);
+}
+.cRule {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 7px 0;
+}
+.cRule::before,
+.cRule::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--line-graphic);
+  transform: scaleX(1);
+  animation: drawRule 0.4s var(--ease) both;
+}
+.cRule span {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--accent);
+}
+
+@keyframes fadeRise {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes drawRule {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* --- Streamed answer --- */
+.answer {
+  margin-top: 16px;
+  font-family: var(--font-serif);
+  font-size: 17.5px;
+  line-height: 1.75;
+  min-height: 1.75em;
+}
+.answer p {
+  margin-top: 14px;
+}
+.answer p:first-child {
+  margin-top: 0;
+}
+.code {
+  font-family: var(--font-mono);
+  font-size: 0.86em;
+  background: var(--paper-raised);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+.cite {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 500;
+  padding: 1px 4px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background var(--t-fast);
+}
+.cite:hover,
+.cite:focus-visible {
+  background: var(--accent-wash);
+}
+.caret {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--accent);
+  vertical-align: -2px;
+  margin-left: 1px;
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* --- Sources module (§6.2) --- */
+.sources {
+  margin-top: 20px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  overflow: hidden;
+  transition: border-color var(--t-fast);
+}
+.sources:hover {
+  border-color: var(--line-graphic);
+}
+.head {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 11px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: background var(--t-fast);
+}
+.head:hover,
+.head:focus-visible {
+  background: var(--paper-raised);
+}
+.receiptLine {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ink-soft);
+  text-align: left;
+}
+.chev {
+  color: var(--ink-muted);
+  font-size: 11px;
+  transition: transform var(--t-base) var(--ease);
+}
+.sources[data-open="true"] .chev {
+  transform: rotate(180deg);
+}
+/* Sanctioned expansion (PERF-13): grid-rows, content pushes downward only. */
+.wrap {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows var(--t-base) var(--ease);
+}
+.sources[data-open="true"] .wrap {
+  grid-template-rows: 1fr;
+}
+.body {
+  overflow: hidden;
+  border-top: 0 solid var(--line);
+}
+.sources[data-open="true"] .body {
+  border-top-width: 1px;
+}
+.srow {
+  padding: 13px 14px;
+  transition: background var(--t-fast);
+}
+.srow + .srow {
+  border-top: 1px dashed var(--line);
+}
+.hl {
+  background: var(--accent-wash);
+}
+.srowTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 14px;
+}
+.srowL {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+.marker {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 500;
+}
+.score {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+.srcQuote {
+  font-family: var(--font-serif);
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  border-left: 2px solid var(--line);
+  padding-left: 12px;
+  margin: 9px 0;
+}
+.srcLink {
+  font-size: 12.5px;
+  text-decoration: none;
+}
+.x {
+  display: inline-block;
+  transition: transform var(--t-fast) var(--ease);
+}
+.srcLink:hover .x,
+.srcLink:focus-visible .x {
+  transform: translate(2px, -2px);
+}
+
+.errorNote {
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin-top: 10px;
+}
+.declineLine {
+  font-family: var(--font-serif);
+  font-size: 17.5px;
+  line-height: 1.7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stageLine,
+  .cSrc,
+  .cRule::before,
+  .cRule::after,
+  .caret,
+  .chev,
+  .wrap,
+  .sources,
+  .head,
+  .cite,
+  .x {
+    animation: none !important;
+    transition: none !important;
+  }
+}

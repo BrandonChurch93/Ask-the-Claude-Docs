@@ -69,6 +69,8 @@ export interface UseTurn {
   state: TurnState;
   busy: boolean;
   submit: (question: string) => void;
+  /** The viewer's reduced-motion preference, for motion-sensitive render choices. */
+  reduceMotion: boolean;
 }
 
 export function useTurn(driver: TurnDriver = fetchDriver): UseTurn {
@@ -125,5 +127,5 @@ export function useTurn(driver: TurnDriver = fetchDriver): UseTurn {
   );
 
   const busy = state.status === "retrieving" || state.status === "streaming";
-  return { state, busy, submit };
+  return { state, busy, submit, reduceMotion };
 }

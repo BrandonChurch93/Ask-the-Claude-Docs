@@ -3,8 +3,8 @@
 import { useEffect, useId, useRef, useState } from "react";
 
 import { useTurn } from "../../lib/stream/use-turn";
-import type { TurnState } from "../../lib/stream/reducer";
 import { SUGGESTIONS } from "../../lib/suggestions";
+import { Turn } from "./answer/Turn";
 import styles from "./Ask.module.css";
 
 /**
@@ -28,7 +28,7 @@ export function Ask({
   corpus: { pages: number; chunks: number };
   portfolioUrl: string;
 }) {
-  const { state, busy, submit } = useTurn();
+  const { state, busy, submit, reduceMotion } = useTurn();
   const [value, setValue] = useState("");
   const asked = state.status !== "idle";
   const inputRef = useRef<HTMLInputElement>(null);
@@ -91,7 +91,7 @@ export function Ask({
             )}
           </section>
 
-          {asked && <ActiveTurn state={state} />}
+          {asked && <Turn state={state} reduceMotion={reduceMotion} />}
 
           <footer className={styles.foot}>
             <span>
@@ -195,40 +195,5 @@ function Eyebrow({
         </div>
       </div>
     </div>
-  );
-}
-
-/** Compact active-turn view (P5.2). P5.3/P5.4 replace this with the full answer /
- *  refusal anatomy + sources module; here it proves the transition end to end. */
-function ActiveTurn({ state }: { state: TurnState }) {
-  return (
-    <article className={styles.turn} aria-label="Current answer">
-      <div className={styles.provisional}>
-        <p className={styles.provisionalNote}>
-          {state.status === "retrieving" && "retrieving…"}
-          {state.status === "streaming" && "answering…"}
-          {state.status === "settled" && "answered"}
-          {state.status === "refused" && "declined"}
-          {state.status === "errored" && "interrupted"}
-          {" · full answer + sources module land at P5.3/P5.4"}
-        </p>
-        {(state.status === "streaming" || state.status === "settled") && (
-          <p className={styles.answer}>
-            {state.text}
-            {state.status === "streaming" && (
-              <span className={styles.caret} aria-hidden="true" />
-            )}
-          </p>
-        )}
-        {state.status === "refused" && (
-          <p className={styles.answer}>
-            The Claude Code documentation doesn&apos;t cover this.
-          </p>
-        )}
-        {state.status === "errored" && (
-          <p className={styles.answer}>{state.message}</p>
-        )}
-      </div>
-    </article>
   );
 }
