@@ -1,6 +1,7 @@
 "use client";
 
 import { memo, useCallback, useEffect, useId, useRef, useState } from "react";
+import Link from "next/link";
 
 import { useTurn } from "../../lib/stream/use-turn";
 import type { TurnState } from "../../lib/stream/reducer";
@@ -101,9 +102,9 @@ export function Ask({
         <div className={styles.topInner}>
           <span className={styles.wordmark}>Ask the Claude Docs</span>
           <nav className={styles.nav} aria-label="Site">
-            <a href="/evals" className={styles.navLink}>
+            <Link href="/evals" className={styles.navLink}>
               eval scores
-            </a>
+            </Link>
             <a
               href="https://github.com/BrandonChurch93/Ask-the-Claude-Docs"
               target="_blank"
