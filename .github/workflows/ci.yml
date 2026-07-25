@@ -71,7 +71,29 @@ jobs:
         run: npm run build
 
       - name: Browser tests + axe
-        run: echo "stub step (P6.1). Playwright and axe are wired here."
+        # Playwright drives Chromium (only; cross-engine covered by manual
+        # Safari/VoiceOver at P7.4/P8.3). /api/ask is intercepted with canned SSE
+        # (ENG-17: zero model spend), so the model keys are placeholders; the
+        # landing SSR reads the corpus, so DATABASE_URL is the real secret.
+        env:
+          ANTHROPIC_API_KEY: sk-ci
+          OPENAI_API_KEY: sk-ci
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          UPSTASH_REDIS_REST_URL: https://ci.example.com
+          UPSTASH_REDIS_REST_TOKEN: ci
+          PORTFOLIO_URL: https://ci.example.com
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:e2e
+
+      - name: Upload Playwright report
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: playwright-report
+          path: playwright-report/
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Lighthouse CI
         run: echo "stub step (P6.2). Lighthouse CI budgets are wired here."

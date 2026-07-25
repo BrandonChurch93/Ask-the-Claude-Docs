@@ -2,13 +2,13 @@ import type { Metadata, Viewport } from "next";
 import { serif, sans, mono } from "./fonts";
 import { env } from "../lib/env";
 import "./globals.css";
-import styles from "./skip-link.module.css";
 
 /**
- * Root layout: the three font voices on <html>, the full Metadata API pass
- * (ENG-15), and the skip link as the first focusable element (A11Y-04). The
- * conversation lives in <main> inside the page; header/footer landmarks are
- * rendered per-surface (A11Y-03).
+ * Root layout: the three font voices on <html> and the full Metadata API pass
+ * (ENG-15). The skip link (A11Y-04) is rendered per-page as its first focusable
+ * element, so its target is valid on every surface (the landing skips to the
+ * question input; /evals skips to its main content); header/footer landmarks are
+ * per-surface (A11Y-03).
  */
 
 const SITE_NAME = "Ask the Claude Docs";
@@ -59,12 +59,7 @@ export default function RootLayout({
       lang="en"
       className={`${serif.variable} ${sans.variable} ${mono.variable}`}
     >
-      <body>
-        <a href="#ask-input" className={styles.skipLink}>
-          Skip to question input
-        </a>
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

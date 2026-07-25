@@ -33,3 +33,8 @@ yarn-error.log*
 # typescript build info (auto-generated). next-env.d.ts is intentionally
 # committed so `tsc --noEmit` has Next ambient types before `next build` runs.
 *.tsbuildinfo
+
+# Playwright (P6.1)
+/test-results/
+/playwright-report/
+/playwright/.cache/

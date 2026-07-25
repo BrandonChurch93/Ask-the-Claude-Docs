@@ -8,6 +8,7 @@ import { formatRelativeTime } from "../../lib/time";
 import { env } from "../../lib/env";
 import { Eyebrow } from "../ui/Eyebrow";
 import chrome from "../ui/Ask.module.css";
+import skip from "../skip-link.module.css";
 import styles from "./evals.module.css";
 
 /**
@@ -95,6 +96,9 @@ export default async function EvalsPage() {
 
   return (
     <>
+      <a href="#evals-main" className={skip.skipLink}>
+        Skip to eval scores
+      </a>
       <header className={chrome.top}>
         <div className={chrome.topInner}>
           <Link
@@ -119,7 +123,7 @@ export default async function EvalsPage() {
       </header>
 
       <div className={chrome.shell}>
-        <main className={chrome.trail}>
+        <main className={chrome.trail} id="evals-main" tabIndex={-1}>
           <Eyebrow
             summary={{
               relative,

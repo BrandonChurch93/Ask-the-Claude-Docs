@@ -11,6 +11,7 @@ import { Turn } from "./answer/Turn";
 import { Eyebrow } from "./Eyebrow";
 import { Rail } from "./Rail";
 import styles from "./Ask.module.css";
+import skip from "../skip-link.module.css";
 
 /**
  * The interactive shell (ui-ux-spec §2-4, §9-10). Owns the session journal (each
@@ -98,6 +99,9 @@ export function Ask({
 
   return (
     <>
+      <a href="#ask-input" className={skip.skipLink}>
+        Skip to question input
+      </a>
       <header className={styles.top}>
         <div className={styles.topInner}>
           <span className={styles.wordmark}>Ask the Claude Docs</span>
@@ -239,7 +243,7 @@ export function Ask({
         <Rail state={lastState} summary={summary} />
       </div>
 
-      <div className={styles.dock}>
+      <div className={styles.dock} role="search" aria-label="Ask the docs">
         <div className={styles.dockInner}>
           <form
             className={styles.askbar}
