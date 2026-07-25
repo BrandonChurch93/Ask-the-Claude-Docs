@@ -15,6 +15,7 @@ import {
   receiptDisplay,
   receiptProse,
 } from "../../../lib/stream/receipt";
+import { DECLINE_SENTINEL } from "../../../lib/rag/prompt";
 import styles from "./answer.module.css";
 
 /**
@@ -29,9 +30,15 @@ import styles from "./answer.module.css";
 export function Turn({
   state,
   reduceMotion,
+  chips,
+  onAsk,
 }: {
   state: TurnState;
   reduceMotion: boolean;
+  /** Sync-derived coverage topics for the server-refusal chips (§7, RAG-21). */
+  chips: string[];
+  /** Submit a new question (coverage chip -> "Tell me about {topic}"). */
+  onAsk: (question: string) => void;
 }) {
   const [open, setOpen] = useState(false);
   const [hovered, setHovered] = useState<number | null>(null);
@@ -79,23 +86,32 @@ export function Turn({
   }
 
   if (state.status === "refused") {
-    // Minimal here; the full refusal anatomy is P5.4.
+    // Server refusal (§7 species a): the full anatomy, embedding-only receipt.
     return (
-      <article className={styles.turn} aria-label="Declined">
-        <p className={styles.declineLine}>
-          The Claude Code documentation doesn&apos;t cover this.
-        </p>
-      </article>
+      <ServerRefusal
+        nearMisses={state.nearMisses}
+        receipt={state.receipt}
+        chips={chips}
+        onAsk={onAsk}
+      />
     );
   }
 
   if (state.status === "idle") return null; // Turn only mounts once asked
 
-  // streaming | settled
+  // streaming | settled. A settled answer whose text opens with the decline
+  // sentinel is a model-side decline (§7 species b): rendered as a decline but
+  // carrying its sources module and its real generation receipt (label reads
+  // "declined", numbers tell the two species apart).
   const streaming = state.status === "streaming";
   const sources = state.sources;
+  const declined =
+    state.status === "settled" && state.text.startsWith(DECLINE_SENTINEL);
   return (
-    <article className={styles.turn} aria-label="Answer">
+    <article
+      className={styles.turn}
+      aria-label={declined ? "Declined" : "Answer"}
+    >
       <AnswerBody
         text={state.text}
         sources={sources}
@@ -107,12 +123,75 @@ export function Turn({
         sources={sources}
         receipt={state.receipt}
         streaming={streaming}
+        declined={declined}
         open={open}
         onToggle={() => setOpen((o) => !o)}
         hovered={hovered}
         flashing={flashing}
         rowRefs={rowRefs}
       />
+    </article>
+  );
+}
+
+/** Server refusal anatomy (§7 species a): decline line, sub, near-miss block,
+ *  sync-derived coverage chips, and the embedding-only receipt. Calm register,
+ *  no alarm styling (UX-09); "excluded" is text, not color alone (A11Y-18). */
+function ServerRefusal({
+  nearMisses,
+  receipt,
+  chips,
+  onAsk,
+}: {
+  nearMisses: SourcePayload[];
+  receipt: Receipt;
+  chips: string[];
+  onAsk: (question: string) => void;
+}) {
+  const ms = Math.round(receipt.timings.totalMs);
+  return (
+    <article className={styles.turn} aria-label="Declined">
+      <p className={styles.declineLine}>{DECLINE_SENTINEL}</p>
+      <p className={styles.declineSub}>
+        Nothing retrieved cleared the confidence threshold, so no answer was
+        generated.
+      </p>
+
+      <div className={styles.misses}>
+        <div className={styles.missesRule}>
+          <span>
+            nearest sections · none cleared {receipt.threshold ?? "-"}
+          </span>
+        </div>
+        {nearMisses.map((m) => (
+          <div key={m.chunkId} className={styles.miss}>
+            <span>
+              {m.breadcrumb} <span className={styles.excluded}>excluded</span>
+            </span>
+            <span className={styles.score}>{m.similarity.toFixed(2)}</span>
+          </div>
+        ))}
+      </div>
+
+      {chips.length > 0 && (
+        <div className={styles.covers}>
+          <p className={styles.coversLabel}>The corpus does cover</p>
+          {chips.map((topic) => (
+            <button
+              key={topic}
+              className={styles.chip}
+              onClick={() => onAsk(`Tell me about ${topic}`)}
+            >
+              {topic}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <p className={styles.refusalReceipt}>
+        <span className={styles.declinedKey}>declined</span> · {ms} ms ·
+        embedding only
+      </p>
     </article>
   );
 }
@@ -255,6 +334,7 @@ function SourcesModule({
   sources,
   receipt,
   streaming,
+  declined,
   open,
   onToggle,
   hovered,
@@ -264,20 +344,29 @@ function SourcesModule({
   sources: SourcePayload[];
   receipt: ReceiptSkeleton | Receipt;
   streaming: boolean;
+  declined: boolean;
   open: boolean;
   onToggle: () => void;
   hovered: number | null;
   flashing: number | null;
   rowRefs: RefObject<Map<number, HTMLDivElement | null>>;
 }) {
-  // Retrieval-known fields during streaming; the full receipt at settled.
+  // Retrieval-known fields during streaming; the full receipt at settled. A
+  // model-side decline shows a real generation receipt labeled "declined" (§7b).
   const full = !streaming && "timings" in receipt ? receipt : null;
-  const line = full
-    ? receiptDisplay(receiptFields(sources, full))
-    : `${sources.length} sources · top ${sources[0]?.similarity.toFixed(2) ?? "-"} · threshold ${receipt.threshold ?? "-"} · ${receipt.model} · streaming…`;
-  const prose = full
-    ? receiptProse(receiptFields(sources, full))
-    : `${sources.length} sources retrieved, streaming.`;
+  const declinedLine = full
+    ? `declined · ${Math.round(full.timings.totalMs)} ms · $${full.costUsd.toFixed(4)}`
+    : "";
+  const line = !full
+    ? `${sources.length} sources · top ${sources[0]?.similarity.toFixed(2) ?? "-"} · threshold ${receipt.threshold ?? "-"} · ${receipt.model} · streaming…`
+    : declined
+      ? declinedLine
+      : receiptDisplay(receiptFields(sources, full));
+  const prose = !full
+    ? `${sources.length} sources retrieved, streaming.`
+    : declined
+      ? `Declined. ${declinedLine.replace(/·/g, ",")}.`
+      : receiptProse(receiptFields(sources, full));
 
   return (
     <div className={styles.sources} data-open={open}>

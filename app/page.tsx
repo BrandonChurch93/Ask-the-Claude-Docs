@@ -1,5 +1,6 @@
-import { getSyncSummary } from "../lib/db/queries";
+import { getSyncSummary, getCoverage } from "../lib/db/queries";
 import { formatRelativeTime } from "../lib/time";
+import { pickCoverageChips } from "../lib/coverage";
 import { env } from "../lib/env";
 import { Header } from "./ui/Header";
 import { Ask } from "./ui/Ask";
@@ -12,10 +13,11 @@ import { Ask } from "./ui/Ask";
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  const s = await getSyncSummary();
+  const [s, coverage] = await Promise.all([getSyncSummary(), getCoverage()]);
   const relative = s.syncedAt
     ? formatRelativeTime(s.syncedAt)
     : "not yet synced";
+  const chips = pickCoverageChips(coverage.map((c) => c.title));
   return (
     <>
       <Header />
@@ -27,6 +29,7 @@ export default async function Home() {
           updated: s.updated,
         }}
         corpus={{ pages: s.pages, chunks: s.chunks }}
+        chips={chips}
         portfolioUrl={env.PORTFOLIO_URL}
       />
     </>

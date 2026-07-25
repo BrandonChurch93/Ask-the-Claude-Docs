@@ -252,10 +252,89 @@
   color: var(--ink-soft);
   margin-top: 10px;
 }
+/* --- Refusal state (§7). Calm register, no alarm styling (UX-09). --- */
 .declineLine {
+  margin-top: 16px;
   font-family: var(--font-serif);
   font-size: 17.5px;
   line-height: 1.7;
+}
+.declineSub {
+  font-size: 14px;
+  color: var(--ink-soft);
+  margin-top: 6px;
+  max-width: 56ch;
+}
+.misses {
+  margin-top: 18px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  padding: 4px 14px 12px;
+}
+.missesRule {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0 4px;
+}
+.missesRule::before,
+.missesRule::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--line-graphic);
+}
+.missesRule span {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--accent);
+}
+.miss {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 6px 2px;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+.covers {
+  margin-top: 16px;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.coversLabel {
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+.chip {
+  font-size: 13px;
+  color: var(--accent);
+  border: 1px solid var(--line-graphic);
+  background: none;
+  border-radius: 999px;
+  padding: 4px 13px;
+  cursor: pointer;
+  transition:
+    background var(--t-fast),
+    border-color var(--t-fast),
+    transform var(--t-fast) var(--ease);
+}
+.chip:hover,
+.chip:focus-visible {
+  background: var(--accent-wash);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+.refusalReceipt {
+  margin-top: 14px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ink-muted);
+}
+.declinedKey {
+  color: var(--accent);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -269,7 +348,8 @@
   .sources,
   .head,
   .cite,
-  .x {
+  .x,
+  .chip {
     animation: none !important;
     transition: none !important;
   }

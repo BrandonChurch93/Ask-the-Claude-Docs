@@ -22,10 +22,12 @@ import styles from "./Ask.module.css";
 export function Ask({
   summary,
   corpus,
+  chips,
   portfolioUrl,
 }: {
   summary: { relative: string; pages: number; chunks: number; updated: number };
   corpus: { pages: number; chunks: number };
+  chips: string[];
   portfolioUrl: string;
 }) {
   const { state, busy, submit, reduceMotion } = useTurn();
@@ -91,7 +93,14 @@ export function Ask({
             )}
           </section>
 
-          {asked && <Turn state={state} reduceMotion={reduceMotion} />}
+          {asked && (
+            <Turn
+              state={state}
+              reduceMotion={reduceMotion}
+              chips={chips}
+              onAsk={onSubmit}
+            />
+          )}
 
           <footer className={styles.foot}>
             <span>
