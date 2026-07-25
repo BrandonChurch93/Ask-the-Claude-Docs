@@ -4,6 +4,7 @@ import { Redis } from "@upstash/redis";
 
 import { config as appConfig } from "./lib/config";
 import { env } from "./lib/env";
+import { RATE_LIMITED } from "./lib/stream/messages";
 
 /**
  * Per-IP rate limiter (security.md §4, SEC-09/11). Runs in middleware, before
@@ -44,8 +45,7 @@ function tooManyRequests(resetMs: number): NextResponse {
     JSON.stringify({
       error: {
         type: "rate_limited",
-        message:
-          "You've hit the request limit for now. It resets within a minute; the daily limit resets at midnight UTC.",
+        message: RATE_LIMITED,
       },
     }),
     {

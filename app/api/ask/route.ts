@@ -6,6 +6,7 @@ import { encodeEvent } from "../../../lib/stream/encode";
 import {
   STREAM_INTERRUPTED,
   REQUEST_FAILED,
+  SPEND_CAP,
 } from "../../../lib/stream/messages";
 import { computeCostUsd } from "../../../lib/stream/cost";
 import { isSpendCapReached, recordSpend } from "../../../lib/spend";
@@ -55,8 +56,6 @@ const askRequestSchema = z
   .strict();
 
 // ui-ux-spec §8 spend-cap copy (SEC-11: render the specified state, not a raw error).
-const SPEND_CAP_MESSAGE =
-  "This demo caps its own spending for the day. It resets at midnight UTC. The eval scores and source links still work while it rests.";
 
 function jsonError(status: number, type: string, message: string): Response {
   return new Response(JSON.stringify({ error: { type, message } }), {
@@ -105,14 +104,14 @@ export async function POST(req: Request): Promise<Response> {
   // in middleware.ts (fail-open).
   try {
     if (await isSpendCapReached()) {
-      return jsonError(429, "spend_cap", SPEND_CAP_MESSAGE);
+      return jsonError(429, "spend_cap", SPEND_CAP);
     }
   } catch (err) {
     console.error(
       "spend cap check failed; failing closed:",
       err instanceof Error ? err.message : "unknown error",
     );
-    return jsonError(429, "spend_cap", SPEND_CAP_MESSAGE);
+    return jsonError(429, "spend_cap", SPEND_CAP);
   }
 
   const encoder = new TextEncoder();

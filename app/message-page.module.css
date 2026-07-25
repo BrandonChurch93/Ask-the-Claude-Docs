@@ -1,0 +1,47 @@
+/*
+ * Shared layout for the app-level error + not-found pages (P5.7). Calm register,
+ * frozen tokens, no alarm styling - they read like the product, not like errors.
+ */
+.page {
+  max-width: 660px;
+  margin: 0 auto;
+  padding: 120px 24px;
+}
+.title {
+  font-family: var(--font-serif);
+  font-size: 27px;
+  font-weight: 400;
+  line-height: 1.35;
+}
+.body {
+  font-size: 15px;
+  color: var(--ink-soft);
+  margin-top: 12px;
+  max-width: 56ch;
+}
+.actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 18px;
+  align-items: baseline;
+}
+.link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-sans);
+  font-size: 15px;
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--t-fast);
+}
+.link:hover,
+.link:focus-visible {
+  color: var(--accent-deep);
+}
+@media (prefers-reduced-motion: reduce) {
+  .link {
+    transition: none;
+  }
+}

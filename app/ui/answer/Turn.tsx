@@ -33,6 +33,7 @@ export function Turn({
   chips,
   onAsk,
   pinned,
+  onRetry,
 }: {
   state: TurnState;
   reduceMotion: boolean;
@@ -42,6 +43,8 @@ export function Turn({
   onAsk: (question: string) => void;
   /** Rail pinned: the sources-module receipt slims to defer to the panel (§6.2). */
   pinned: boolean;
+  /** Resubmit this turn's question (the error-state "Try again", §8/UX-10). */
+  onRetry: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const [hovered, setHovered] = useState<number | null>(null);
@@ -74,12 +77,19 @@ export function Turn({
   }
 
   if (state.status === "errored") {
+    // §8: partial stream (if any) preserved as-is, then the calm note, then a
+    // "Try again" button only where retry is offered (not rate-limit / cap).
     return (
       <>
         {state.text && (
           <AnswerBody text={state.text} sources={[]} streaming={false} />
         )}
         <p className={styles.errorNote}>{state.message}</p>
+        {state.retryable && (
+          <button className={styles.retry} onClick={onRetry}>
+            Try again
+          </button>
+        )}
       </>
     );
   }

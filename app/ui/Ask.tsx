@@ -327,6 +327,7 @@ const ConversationTurn = memo(function ConversationTurn({
           chips={chips}
           onAsk={onAsk}
           pinned={pinned}
+          onRetry={() => submit(question)}
         />
       </article>
     </li>

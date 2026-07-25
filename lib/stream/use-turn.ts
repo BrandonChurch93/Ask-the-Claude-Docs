@@ -17,7 +17,7 @@ import {
 } from "./reducer";
 import { buildChoreography, CHOREO_MIN_MS } from "./choreography";
 import { consumeStream } from "./stream-client";
-import { REQUEST_FAILED } from "./messages";
+import { REQUEST_FAILED, RATE_LIMITED, SPEND_CAP } from "./messages";
 
 /**
  * The client wiring for one turn (ENG-16, §7): a single `useReducer` over the
@@ -44,7 +44,23 @@ export const fetchDriver: TurnDriver = async (question, onEvent) => {
     body: JSON.stringify({ question }),
   });
   if (!res.ok || !res.body) {
-    onEvent({ type: "error", message: REQUEST_FAILED, retryable: true });
+    // Map the route/middleware typed error to the exact §8 copy. Rate-limit and
+    // spend-cap are not retryable (they reset on their own); others are.
+    let message: string = REQUEST_FAILED;
+    let retryable = true;
+    try {
+      const body = (await res.json()) as { error?: { type?: string } };
+      if (body.error?.type === "rate_limited") {
+        message = RATE_LIMITED;
+        retryable = false;
+      } else if (body.error?.type === "spend_cap") {
+        message = SPEND_CAP;
+        retryable = false;
+      }
+    } catch {
+      // non-JSON error body: keep the generic request-failed copy
+    }
+    onEvent({ type: "error", message, retryable });
     return;
   }
   await consumeStream(res.body, onEvent);
