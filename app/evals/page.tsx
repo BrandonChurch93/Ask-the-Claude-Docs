@@ -162,11 +162,11 @@ export default async function EvalsPage() {
               <table className={styles.table}>
                 <thead>
                   <tr>
-                    <th>question</th>
-                    <th>grounded</th>
-                    <th>cited</th>
-                    <th>complete</th>
-                    <th>no fab</th>
+                    <th scope="col">question</th>
+                    <th scope="col">grounded</th>
+                    <th scope="col">cited</th>
+                    <th scope="col">complete</th>
+                    <th scope="col">no fab</th>
                   </tr>
                 </thead>
                 <tbody>
