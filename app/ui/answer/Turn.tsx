@@ -56,10 +56,12 @@ export function Turn({
     (n: number) => {
       setOpen(true);
       requestAnimationFrame(() => {
-        rowRefs.current.get(n)?.scrollIntoView({
+        const row = rowRefs.current.get(n);
+        row?.scrollIntoView({
           block: "nearest",
           behavior: reduceMotion ? "auto" : "smooth",
         });
+        row?.focus(); // A11Y-08: activating a marker moves focus to its card
       });
       setFlashing(n);
       if (flashTimer.current) clearTimeout(flashTimer.current);
@@ -408,6 +410,7 @@ function SourcesModule({
                 ref={(el) => {
                   rowRefs.current.set(n, el);
                 }}
+                tabIndex={-1}
                 className={`${styles.srow} ${hovered === n || flashing === n ? styles.hl : ""}`}
                 data-src={n}
               >
