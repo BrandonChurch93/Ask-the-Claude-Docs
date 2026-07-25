@@ -2,7 +2,6 @@ import { getSyncSummary, getCoverage } from "../lib/db/queries";
 import { formatRelativeTime } from "../lib/time";
 import { pickCoverageChips } from "../lib/coverage";
 import { env } from "../lib/env";
-import { Header } from "./ui/Header";
 import { Ask } from "./ui/Ask";
 
 /**
@@ -20,7 +19,6 @@ export default async function Home() {
   const chips = pickCoverageChips(coverage.map((c) => c.title));
   return (
     <>
-      <Header />
       <Ask
         summary={{
           relative,

@@ -6,13 +6,286 @@
  * animation collapses under prefers-reduced-motion (DS-12).
  */
 
+/* --- Header (§2). Not sticky. --- */
+.top {
+  border-bottom: 1px solid var(--line);
+}
+.topInner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 15px 24px;
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+}
+.wordmark {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  font-weight: 600;
+  margin-right: auto;
+}
+.nav {
+  display: flex;
+  gap: 18px;
+  align-items: baseline;
+  font-size: 13px;
+}
+.navLink {
+  color: var(--accent);
+  text-decoration: none;
+  position: relative;
+}
+.navLink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: -3px;
+  border-top: 1px solid var(--accent);
+  transition: right var(--t-fast) var(--ease);
+}
+.navLink:hover::after,
+.navLink:focus-visible::after {
+  right: 0;
+}
+.divider {
+  width: 1px;
+  height: 14px;
+  background: var(--line-graphic);
+  align-self: center;
+}
+.histWrap {
+  position: relative;
+}
+.histBtn {
+  font-size: 13px;
+  background: none;
+  border: none;
+  color: var(--ink-soft);
+  padding: 2px 0;
+  cursor: pointer;
+  transition: color var(--t-fast);
+}
+.histBtn:hover,
+.histBtn:focus-visible {
+  color: var(--accent);
+}
+.histBtn:disabled {
+  color: var(--ink-muted);
+  cursor: default;
+}
+.histPop {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  width: 320px;
+  background: var(--card);
+  border: 1px solid var(--line-graphic);
+  border-radius: 10px;
+  box-shadow: 0 6px 24px rgba(33, 31, 26, 0.1);
+  padding: 6px;
+  z-index: 55;
+}
+.histPop[hidden] {
+  display: none;
+}
+.histHead {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  padding: 6px 10px 4px;
+}
+.histList {
+  list-style: none;
+}
+.hItem {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: baseline;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 7px;
+  padding: 8px 10px;
+  font-size: 13.5px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: background var(--t-fast);
+}
+.hItem:hover,
+.hItem:focus-visible {
+  background: var(--paper-raised);
+  color: var(--accent);
+}
+.hn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--ink-muted);
+}
+.pin {
+  font-size: 12.5px;
+  border: 1px solid var(--line-graphic);
+  background: var(--card);
+  border-radius: 8px;
+  padding: 6px 14px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition:
+    border-color var(--t-fast),
+    color var(--t-fast),
+    background var(--t-fast),
+    transform var(--t-fast) var(--ease);
+}
+.pin:hover,
+.pin:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+.pin[aria-pressed="true"] {
+  background: var(--paper-raised);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 .shell {
   max-width: 1180px;
   margin: 0 auto;
   padding: 0 24px 140px; /* bottom clearance for the fixed dock (§10) */
   display: grid;
   grid-template-columns: minmax(0, 660px);
+  gap: 56px;
   justify-content: center;
+}
+/* Pinned rail (§9): a second column at >=1120px only; below that it is hidden
+   and the receipt reverts to full (UX-11). */
+.shell[data-pin="on"] {
+  grid-template-columns: minmax(0, 660px) 296px;
+}
+.rail {
+  display: none;
+  position: sticky;
+  top: 44px;
+  align-self: start;
+  margin-top: 46px;
+}
+.shell[data-pin="on"] .rail {
+  display: block;
+}
+@media (max-width: 1120px) {
+  .shell[data-pin="on"] {
+    grid-template-columns: minmax(0, 660px);
+  }
+  .shell[data-pin="on"] .rail {
+    display: none;
+  }
+}
+.railBox {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  padding: 16px;
+}
+.railH2 {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 12px;
+}
+.railEmpty {
+  font-size: 12.5px;
+  color: var(--ink-muted);
+}
+.stage {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+  margin-bottom: 12px;
+  line-height: 2;
+}
+.stage b {
+  color: var(--ok);
+  font-weight: 500;
+}
+.railSrc {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 12.5px;
+  padding: 5px 8px;
+  border-radius: 6px;
+}
+.railSrc:hover {
+  background: var(--paper-raised);
+}
+.railDim {
+  color: var(--ink-soft);
+}
+.railRule {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 7px 0;
+}
+.railRule::before,
+.railRule::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--line-graphic);
+}
+.railRule span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--accent);
+}
+.railFoot {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-muted);
+  margin-top: 12px;
+  border-top: 1px dashed var(--line);
+  padding-top: 10px;
+  line-height: 1.8;
+}
+.score {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-muted);
+}
+.excluded {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-muted);
+}
+
+/* --- Conversation journal (A11Y-05: ol of article turns). --- */
+.conversation {
+  list-style: none;
+}
+.turnItem {
+  margin-top: 52px;
+  scroll-margin-top: 56px;
+}
+.turnItem + .turnItem {
+  border-top: 1px solid var(--line);
+  padding-top: 44px;
+}
+.asked {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  transition: color 0.6s;
+}
+.spot .asked {
+  color: var(--accent);
 }
 .trail {
   max-width: 660px;
@@ -318,7 +591,12 @@
   .arrow,
   .go,
   .askbar,
-  .foot a {
+  .foot a,
+  .navLink::after,
+  .histBtn,
+  .hItem,
+  .pin,
+  .asked {
     transition: none;
   }
 }

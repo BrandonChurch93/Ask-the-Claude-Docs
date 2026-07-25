@@ -168,6 +168,19 @@
   color: var(--ink-soft);
   text-align: left;
 }
+/* Receipt slimming (§6.2): when the rail is pinned AND >=1120px, the receipt
+   defers to the panel; below 1120px the rail is hidden and the full line returns. */
+.slim {
+  display: none;
+}
+@media (min-width: 1120px) {
+  .sources.pinned .process {
+    display: none;
+  }
+  .sources.pinned .slim {
+    display: inline;
+  }
+}
 .chev {
   color: var(--ink-muted);
   font-size: 11px;

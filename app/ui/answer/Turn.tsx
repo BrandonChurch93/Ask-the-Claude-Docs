@@ -32,6 +32,7 @@ export function Turn({
   reduceMotion,
   chips,
   onAsk,
+  pinned,
 }: {
   state: TurnState;
   reduceMotion: boolean;
@@ -39,6 +40,8 @@ export function Turn({
   chips: string[];
   /** Submit a new question (coverage chip -> "Tell me about {topic}"). */
   onAsk: (question: string) => void;
+  /** Rail pinned: the sources-module receipt slims to defer to the panel (§6.2). */
+  pinned: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const [hovered, setHovered] = useState<number | null>(null);
@@ -63,25 +66,21 @@ export function Turn({
   );
 
   if (state.status === "retrieving") {
-    return (
-      <article className={styles.turn} aria-label="Retrieving">
-        {state.choreo && (
-          <Choreography
-            stages={state.choreo.stages.slice(0, state.choreo.revealed)}
-          />
-        )}
-      </article>
-    );
+    return state.choreo ? (
+      <Choreography
+        stages={state.choreo.stages.slice(0, state.choreo.revealed)}
+      />
+    ) : null;
   }
 
   if (state.status === "errored") {
     return (
-      <article className={styles.turn} aria-label="Answer interrupted">
+      <>
         {state.text && (
           <AnswerBody text={state.text} sources={[]} streaming={false} />
         )}
         <p className={styles.errorNote}>{state.message}</p>
-      </article>
+      </>
     );
   }
 
@@ -105,13 +104,8 @@ export function Turn({
   // "declined", numbers tell the two species apart).
   const streaming = state.status === "streaming";
   const sources = state.sources;
-  const declined =
-    state.status === "settled" && state.text.startsWith(DECLINE_SENTINEL);
   return (
-    <article
-      className={styles.turn}
-      aria-label={declined ? "Declined" : "Answer"}
-    >
+    <>
       <AnswerBody
         text={state.text}
         sources={sources}
@@ -123,14 +117,17 @@ export function Turn({
         sources={sources}
         receipt={state.receipt}
         streaming={streaming}
-        declined={declined}
+        declined={
+          state.status === "settled" && state.text.startsWith(DECLINE_SENTINEL)
+        }
+        pinned={pinned}
         open={open}
         onToggle={() => setOpen((o) => !o)}
         hovered={hovered}
         flashing={flashing}
         rowRefs={rowRefs}
       />
-    </article>
+    </>
   );
 }
 
@@ -150,7 +147,7 @@ function ServerRefusal({
 }) {
   const ms = Math.round(receipt.timings.totalMs);
   return (
-    <article className={styles.turn} aria-label="Declined">
+    <>
       <p className={styles.declineLine}>{DECLINE_SENTINEL}</p>
       <p className={styles.declineSub}>
         Nothing retrieved cleared the confidence threshold, so no answer was
@@ -192,7 +189,7 @@ function ServerRefusal({
         <span className={styles.declinedKey}>declined</span> · {ms} ms ·
         embedding only
       </p>
-    </article>
+    </>
   );
 }
 
@@ -335,6 +332,7 @@ function SourcesModule({
   receipt,
   streaming,
   declined,
+  pinned,
   open,
   onToggle,
   hovered,
@@ -345,6 +343,7 @@ function SourcesModule({
   receipt: ReceiptSkeleton | Receipt;
   streaming: boolean;
   declined: boolean;
+  pinned: boolean;
   open: boolean;
   onToggle: () => void;
   hovered: number | null;
@@ -369,7 +368,10 @@ function SourcesModule({
       : receiptProse(receiptFields(sources, full));
 
   return (
-    <div className={styles.sources} data-open={open}>
+    <div
+      className={`${styles.sources}${pinned ? ` ${styles.pinned}` : ""}`}
+      data-open={open}
+    >
       <button
         className={styles.head}
         aria-expanded={open}
@@ -377,7 +379,10 @@ function SourcesModule({
         onClick={onToggle}
       >
         <span className={styles.receiptLine} aria-hidden="true">
-          {line}
+          <span className={styles.process}>{line}</span>
+          <span className={styles.slim}>
+            {sources.length} sources cited · see retrieval panel
+          </span>
         </span>
         <span className={styles.chev} aria-hidden="true">
           ▾
