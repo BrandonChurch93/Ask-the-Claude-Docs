@@ -4,6 +4,7 @@ import { memo, useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { useTurn } from "../../lib/stream/use-turn";
 import type { TurnState } from "../../lib/stream/reducer";
+import { announce } from "../../lib/stream/announce";
 import { SUGGESTIONS } from "../../lib/suggestions";
 import { Turn } from "./answer/Turn";
 import { Eyebrow } from "./Eyebrow";
@@ -149,6 +150,12 @@ export function Ask({
           </nav>
         </div>
       </header>
+
+      {/* One status region per conversation (A11Y-11/14): state transitions only,
+          never the token stream. Visually hidden; announced polite. */}
+      <div className={styles.srOnly} aria-live="polite" aria-atomic="true">
+        {announce(lastState)}
+      </div>
 
       <div className={styles.shell} data-pin={pinned ? "on" : "off"}>
         <main className={styles.trail}>
@@ -305,7 +312,12 @@ const ConversationTurn = memo(function ConversationTurn({
       id={id}
       className={`${styles.turnItem}${spotlit ? ` ${styles.spot}` : ""}`}
     >
-      <article aria-labelledby={headingId}>
+      <article
+        aria-labelledby={headingId}
+        aria-busy={
+          state.status === "retrieving" || state.status === "streaming"
+        }
+      >
         <h2 id={headingId} className={styles.asked}>
           {question}
         </h2>
