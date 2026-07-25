@@ -33,7 +33,12 @@ export function Ask({
   chips,
   portfolioUrl,
 }: {
-  summary: { relative: string; pages: number; chunks: number; updated: number };
+  summary: {
+    syncedAt: number | null;
+    pages: number;
+    chunks: number;
+    updated: number;
+  };
   corpus: { pages: number; chunks: number };
   chips: string[];
   portfolioUrl: string;

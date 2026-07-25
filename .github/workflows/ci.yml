@@ -57,18 +57,25 @@ jobs:
         run: echo "stub step (P4.2, EVAL-06). Retrieval eval suite is wired here."
 
       - name: Build
-        # `next build` evaluates the /api/ask route to collect page data, which
-        # imports env.ts (boot-parsed, ENG-06). The build calls no APIs, so it
-        # runs on schema-valid placeholders. Real values are set on Vercel at
-        # deploy (P8.1); these are short and creds-free so SEC-01's grep stays clean.
+        # `/` and `/evals` are static (PERF-02), so `next build` prerenders them and
+        # reads the corpus summary (RAG-21); DATABASE_URL is the real secret, as in
+        # the e2e/Lighthouse steps. No paid APIs run at build (route handlers aren't
+        # prerendered; env.ts is boot-parsed, ENG-06), so the model/redis keys stay
+        # creds-free placeholders and SEC-01's grep stays clean.
         env:
           ANTHROPIC_API_KEY: sk-ci
           OPENAI_API_KEY: sk-ci
-          DATABASE_URL: postgresql://localhost:5432/ci
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
           UPSTASH_REDIS_REST_URL: https://ci.example.com
           UPSTASH_REDIS_REST_TOKEN: ci
           PORTFOLIO_URL: https://ci.example.com
         run: npm run build
+
+      - name: Payload budgets (PERF-03)
+        # Asserts performance.md §2 from the build output: absolute first-load JS
+        # per route + the ≤30 KB app-delta, plus fonts/CSS. Coupled to the build
+        # stage (PERF-03: a breach fails the build); reads .next, no server or APIs.
+        run: npm run check:payload
 
       - name: Browser tests + axe
         # Playwright drives Chromium (only; cross-engine covered by manual
@@ -96,4 +103,26 @@ jobs:
           retention-days: 7
 
       - name: Lighthouse CI
-        run: echo "stub step (P6.2). Lighthouse CI budgets are wired here."
+        # PERF-01 page budgets (performance.md §1) via .lighthouserc.json: median of
+        # 3 runs per route on the prod build, mobile-throttled. Metric -> audit map:
+        # LCP/CLS -> same-named audits; TTFB -> server-response-time; INP (a field
+        # metric Lighthouse lab cannot measure) -> total-blocking-time, its standard
+        # lab proxy at the same 200 ms bar. Same env as e2e: DATABASE_URL is the real
+        # secret (both routes SSR from the corpus), model/redis keys are placeholders.
+        env:
+          ANTHROPIC_API_KEY: sk-ci
+          OPENAI_API_KEY: sk-ci
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          UPSTASH_REDIS_REST_URL: https://ci.example.com
+          UPSTASH_REDIS_REST_TOKEN: ci
+          PORTFOLIO_URL: https://ci.example.com
+        run: npx lhci autorun
+
+      - name: Upload Lighthouse report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: lighthouse-report
+          path: .lighthouseci/
+          if-no-files-found: ignore
+          retention-days: 7

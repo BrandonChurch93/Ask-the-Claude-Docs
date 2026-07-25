@@ -4,7 +4,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { getSyncSummary } from "../../lib/db/queries";
-import { formatRelativeTime } from "../../lib/time";
 import { env } from "../../lib/env";
 import { Eyebrow } from "../ui/Eyebrow";
 import chrome from "../ui/Ask.module.css";
@@ -14,10 +13,11 @@ import styles from "./evals.module.css";
 /**
  * /evals - the scoreboard (ui-ux-spec §12, EVAL-16/UX-14). Renders evals/latest.json
  * verbatim, including regressions; nothing is computed at request time. Same chrome
- * as the app minus the history/retrieval controls. Dynamic only for the eyebrow's
- * freshness; the scores come straight off the committed artifact.
+ * as the app minus the history/retrieval controls. Statically rendered with ISR
+ * (PERF-02, revalidate=900); the scores come straight off the committed artifact
+ * and the eyebrow's freshness is computed client-side from `syncedAt`.
  */
-export const dynamic = "force-dynamic";
+export const revalidate = 900;
 
 export const metadata: Metadata = { title: "Eval scores" };
 
@@ -86,9 +86,6 @@ const CHECKS = [
 export default async function EvalsPage() {
   const a = loadLatest();
   const summary = await getSyncSummary();
-  const relative = summary.syncedAt
-    ? formatRelativeTime(summary.syncedAt)
-    : "not yet synced";
   const date = a.run_id.slice(0, 10);
   const qById = new Map(
     a.retrieval.per_question.map((q) => [q.id, q.question]),
@@ -126,7 +123,7 @@ export default async function EvalsPage() {
         <main className={chrome.trail} id="evals-main" tabIndex={-1}>
           <Eyebrow
             summary={{
-              relative,
+              syncedAt: summary.syncedAt ? summary.syncedAt.getTime() : null,
               pages: summary.pages,
               chunks: summary.chunks,
               updated: summary.updated,

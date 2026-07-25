@@ -1,18 +1,26 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
+import { useRelativeTime } from "./use-relative-time";
 import styles from "./Ask.module.css";
 
 /** The sync eyebrow + freshness popover (ui-ux-spec §3, UX-03). Outside-click and
- *  Escape close it; values are the sync-derived summary (RAG-21). */
+ *  Escape close it; values are the sync-derived summary (RAG-21). Freshness is
+ *  computed client-side from `syncedAt` so it stays accurate under static caching. */
 export function Eyebrow({
   summary,
 }: {
-  summary: { relative: string; pages: number; chunks: number; updated: number };
+  summary: {
+    syncedAt: number | null;
+    pages: number;
+    chunks: number;
+    updated: number;
+  };
 }) {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   const popId = useId();
+  const relative = useRelativeTime(summary.syncedAt);
 
   useEffect(() => {
     if (!open) return;
@@ -40,7 +48,7 @@ export function Eyebrow({
           onClick={() => setOpen((o) => !o)}
         >
           <span className={styles.dot} aria-hidden="true" />
-          synced {summary.relative}
+          synced <span suppressHydrationWarning>{relative}</span>
         </button>
         <div className={styles.pop} id={popId} hidden={!open}>
           <h3 className={styles.popHead}>Corpus freshness</h3>
@@ -50,9 +58,9 @@ export function Eyebrow({
             picking up anything that changed.
           </p>
           <p className={styles.popMeta}>
-            last sync {summary.relative} · {summary.pages.toLocaleString()}{" "}
-            pages · {summary.chunks.toLocaleString()} chunks · {summary.updated}{" "}
-            updated
+            last sync <span suppressHydrationWarning>{relative}</span> ·{" "}
+            {summary.pages.toLocaleString()} pages ·{" "}
+            {summary.chunks.toLocaleString()} chunks · {summary.updated} updated
           </p>
         </div>
       </div>

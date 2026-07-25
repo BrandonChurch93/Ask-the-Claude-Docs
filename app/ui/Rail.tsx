@@ -2,6 +2,7 @@
 
 import type { TurnState } from "../../lib/stream/reducer";
 import { config } from "../../lib/config";
+import { useRelativeTime } from "./use-relative-time";
 import styles from "./Ask.module.css";
 
 /**
@@ -16,11 +17,13 @@ export function Rail({
   summary,
 }: {
   state: TurnState | null;
-  summary: { relative: string; pages: number };
+  summary: { syncedAt: number | null; pages: number };
 }) {
+  const relative = useRelativeTime(summary.syncedAt);
   const foot = (
     <p className={styles.railFoot}>
-      corpus synced {summary.relative} · {summary.pages.toLocaleString()} pages
+      corpus synced <span suppressHydrationWarning>{relative}</span> ·{" "}
+      {summary.pages.toLocaleString()} pages
     </p>
   );
 

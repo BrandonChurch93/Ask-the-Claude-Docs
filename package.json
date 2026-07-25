@@ -13,6 +13,7 @@
     "test": "vitest run",
     "check:em-dash": "node scripts/check-em-dash.mjs",
     "check:secrets": "node scripts/check-secret-shapes.mjs",
+    "check:payload": "node scripts/check-payload.mjs",
     "db:migrate": "NODE_OPTIONS=--conditions=react-server tsx --env-file=.env.local scripts/db-migrate.ts",
     "ingest": "NODE_OPTIONS=--conditions=react-server tsx --env-file=.env.local scripts/ingest.ts",
     "retrieve": "NODE_OPTIONS=--conditions=react-server tsx --env-file=.env.local scripts/retrieve.ts",
@@ -39,6 +40,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "4.12.1",
+    "@lhci/cli": "0.15.1",
     "@playwright/test": "1.62.0",
     "@types/node": "20.19.43",
     "@types/react": "19.2.17",
@@ -54,6 +56,7 @@
     "sharp": "0.35.3",
     "postcss": "8.5.22",
     "brace-expansion": "5.0.8",
-    "minimatch": "10.2.5"
+    "minimatch": "10.2.5",
+    "tmp": "0.2.7"
   }
 }

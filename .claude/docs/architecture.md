@@ -113,4 +113,4 @@ Sonnet-class models offer 1M-token context; stuffing the corpus per query is tec
 
 ## 5. Deliberately deferred (v1.5+ roadmap, not scope creep)
 
-Multi-turn with query rewriting · multi-corpus (API + MCP docs) · hybrid search (tsvector + vector fusion) and reranking · dark theme · persistent research-mode panel as default · RUM/observability stack. Each is deferred with reasoning recorded above or in `honesty-boundaries.md`; none may be pulled into v1 without a Tier 3 decision.
+Multi-turn with query rewriting · multi-corpus (API + MCP docs) · hybrid search (tsvector + vector fusion) and reranking · a smarter refusal gate (beyond the single cosine threshold) · dark theme · persistent research-mode panel as default · RUM/observability stack · LCP / first-load reductions against the framework floor (inline critical CSS, browserslist modernization to drop legacy-JS polyfills, unused-JS tree-shaking — `performance.md` §1–2, ~2.3–2.4 s best case, all Tier-3 config changes). Each is deferred with reasoning recorded above or in `honesty-boundaries.md`; none may be pulled into v1 without a Tier 3 decision.
