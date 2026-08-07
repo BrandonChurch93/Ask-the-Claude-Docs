@@ -1,4 +1,4 @@
-# SESSION HANDOFF — Ask the Claude Docs
+# SESSION HANDOFF · Ask the Claude Docs
 
 _Last updated: 2026-07-26. This orients a cold session in one read. Authoritative
 sources remain `CLAUDE.md` (operating contract) and `.claude/docs/build-checklist.md`
@@ -19,16 +19,16 @@ Brandon review; every push must keep CI green (never mark a step complete on a r
 (Brandon-authorized, interview timing) pulled the deploy **ahead** of the Phase-7
 audits.
 
-- **Live:** https://ask-the-claude-docs.vercel.app — Vercel, function region **pdx1**
+- **Live:** https://ask-the-claude-docs.vercel.app · Vercel, function region **pdx1**
   co-located with Supabase **us-west-2** (docs assumed US-East; same-region premise
-  holds, different coast — logged).
+  holds, different coast, logged).
 - **P8.1 verified live (2026-07-26):** security headers correct on every route (CSP
   with no external origins, nosniff, referrer-policy, permissions-policy); `/` and
   `/evals` static (vercel-cache HIT/PRERENDER); `/api/ask` dynamic + `no-store`; a real
   cited answer and a live server refusal both work end-to-end.
 - **Informal live latency** (formal p95 is P8.2): answer TTFB ~1.5s / total ~7s;
   refusal ~1.4s; retrieval ~1s in cold single-shot samples (queryMs high = cold pooled
-  connection, not warm pgvector — re-measure warm at P8.2).
+  connection, not warm pgvector; re-measure warm at P8.2).
 
 ## The one open item (does NOT block the demo)
 
@@ -36,10 +36,10 @@ audits.
 at the build that is currently live (a redeploy likely reused the build cache;
 page metadata is baked into the static prerender). **Fix (Brandon, Vercel-side):**
 confirm `SITE_URL` is set for the **Production** environment, then trigger a **fresh**
-build — redeploy with "Use existing Build Cache" **unchecked**, or push any commit.
+build: redeploy with "Use existing Build Cache" **unchecked**, or push any commit.
 Affects social-share previews + SEO canonical only; the demo itself is fully functional.
 
-## What remains — this week, against the live deploy, in this order
+## What remains · this week, against the live deploy, in this order
 
 1. **P7.0** · Design fine-tuning pass (🔶 Brandon-driven; the deferred UI polish). Start here.
 2. **P7.1–P7.6** · Audits: performance, mobile/responsive, design compliance, a11y
@@ -52,7 +52,7 @@ Affects social-share previews + SEO canonical only; the demo itself is fully fun
 
 Confirm with Brandon whether the **`SITE_URL`/OG fix** landed (quick re-check:
 `curl -s https://ask-the-claude-docs.vercel.app/ | grep canonical` should show the prod
-URL, not localhost). Then **begin P7.0** — the design fine-tuning pass — per the
+URL, not localhost). Then **begin P7.0**, the design fine-tuning pass, per the
 checklist: read its `reads:` (`design-system.md`, `ui-ux-spec.md`, the v10 mock), walk
 each surface with Brandon on the live site, apply adjustments within DS/UX rules (any
 token/spec deviation is Tier 3), re-verify. Do **not** re-run completed steps; locate

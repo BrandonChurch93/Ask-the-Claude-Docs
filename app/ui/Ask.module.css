@@ -160,6 +160,10 @@
   color: var(--accent);
   transform: translateY(-1px);
 }
+/* Press scale, §6.2 buttons row (Ask, toggle, chips all carry it). */
+.pin:active {
+  transform: translateY(0) scale(0.98);
+}
 .pin[aria-pressed="true"] {
   background: var(--paper-raised);
   border-color: var(--accent);

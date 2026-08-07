@@ -355,6 +355,10 @@
   border-color: var(--accent);
   transform: translateY(-1px);
 }
+/* Press scale, §6.2 buttons row (Ask, toggle, chips all carry it). */
+.chip:active {
+  transform: translateY(0) scale(0.98);
+}
 .refusalReceipt {
   margin-top: 14px;
   font-family: var(--font-mono);

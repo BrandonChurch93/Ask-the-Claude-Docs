@@ -1,5 +1,6 @@
 /*
- * Design tokens: the §2.1 palette, frozen as values (design-system.md §2.1).
+ * Design tokens: the §2.1 palette and the §6.1 motion tokens, frozen as values
+ * (design-system.md §2.1, §6.1).
  * Ships the four §2.4 corrections to the v10 mock: --ink-muted is #726C59
  * (darkened for contrast), semantic lines use --line-graphic (the mock's
  * --line-strong is retired), no opacity is ever applied to text, and fonts are
@@ -33,4 +34,11 @@
 
   /* Status */
   --ok: #1d9e75; /* sync status dot only (DS-03) */
+
+  /* Motion (§6.1). Every transition and animation in the §6.2 catalog resolves
+     its timing here; no component declares a raw duration or easing (DS-11).
+     prefers-reduced-motion collapses all of it (DS-12), per-module. */
+  --t-fast: 0.15s; /* hovers, washes */
+  --t-base: 0.25s; /* reveals, expansion, chevron */
+  --ease: cubic-bezier(0.3, 0.7, 0.4, 1); /* everything eased */
 }
