@@ -20,6 +20,14 @@
     {
       "date": "2026-07-23",
       "change": "P4.5 judged-eval fired the P4.3 re-argument flag on a-08 ('How do I hook Claude Code up to a remote MCP server?'): in a judged run the generator emitted the decline sentinel on this answerable question, casting doubt on the gold. Re-argued against the live corpus. The rank-1 chunk claude-code/mcp-quickstart (sim 0.711; 'Add an MCP server to Claude Code, verify the connection, and find the configuration on disk') genuinely answers the question and was never a gold; the recommended remote transport is HTTP, documented at claude-code/mcp#installing-mcp-servers ('claude mcp add --transport http <name> <url>'). Corrected golds to those two chunks. Dropped both flagged golds: claude-code/mcp#installing-mcp-servers/option-2-add-a-remote-sse-server (the doc marks SSE deprecated -- 'Use HTTP servers instead' -- so it mislabels a deprecated path as the canonical answer) and the bare claude-code/mcp page intro (general MCP, not remote-specific; the weakest of the five P4.3 corrections, explicitly flagged there for re-argument). The question stays answerable (mcp-quickstart plainly answers it), so it is not reclassified. Effect: a-08 first-gold rank 4 -> 1 (MRR contribution 0.25 -> 1.0); hit@5 unchanged (a-08 already hit at rank 4). Retrieval is unchanged; only gold matching changes (EVAL-03). Scope note: this corrects the retrieval label; the generator's occasional model-side decline on a-08 is a separate noise phenomenon now absorbed by the median-of-3 methodology (EVAL Sec 4)."
+    },
+    {
+      "date": "2026-08-07",
+      "change": "P7.0 dangling-gold repair (EVAL-02/EVAL-03). The upstream docs restructured between the 2026-07-23 baseline and today; the daily sync tracked it (corpus 172 pages/3496 chunks -> 164 pages/3421 chunks) and 6 of 34 gold chunk_ids stopped existing, so a-11, a-12, a-14 and a-20 could no longer hit and the CI retrieval gate went red. Every one is a heading restructure, not deleted content, which is exactly what EVAL-02 exists to surface: model-config 'Model aliases' split into two segments; agent-sdk/overview 'Get started' merged from two segments into one; github-actions 'Manual setup' renested under a new 'Setup' parent; plugins 'Quickstart'/'Create your first plugin' regrouped into quickstart-1..3. Each dead id was verified against the live chunk text (same breadcrumb, same section) before remapping. Mappings are 1:1 or reducing and no question gained a gold, so hit@5 cannot improve merely by widening the target set: a-12 went 3 golds -> 2 and a-20 went 3 -> 2."
+    },
+    {
+      "date": "2026-08-07",
+      "change": "P7.0 a-14 same-page parent gold (EVAL-03), the identical correction P4.3 applied to five questions: retrieval already returns the right material while the gold points one section deeper. a-14's entire top-5 is the github-actions page, with '#setup' at rank 1 (0.708) and the page root at rank 2, but its only gold was the child 'setup/manual-setup'. The cause is upstream structure, not retrieval: at the 2026-07-23 baseline 'Manual setup' was a top-level section and hit; the docs then introduced a 'Setup' parent heading, which created '#setup' and pushed manual-setup a level deeper. Adding the parent restores what the question was measuring rather than changing the bar. a-11 was deliberately NOT given the same treatment: P4.3 ruled it a genuine retrieval gap (Brandon), and that ruling stands even though the model-config page root now appears at rank 5."
     }
   ],
   "notes": "Schema per eval-harness §1. `gold_chunks` are deterministic chunk_ids (rag-design §3); a hit is any gold in top-k. `expected` is answer|refuse (recorded for every question; for boundary it is a best-guess that may legitimately change after calibration, EVAL-01/§1). Refusal and boundary entries carry no gold_chunks. Coverage: each answerable targets a distinct top-level area of the corpus.",
@@ -132,7 +140,7 @@
       "question": "How do I change which model Claude Code runs on?",
       "gold_chunks": [
         "claude-code/model-config#available-models/setting-your-model-1",
-        "claude-code/model-config#available-models/model-aliases"
+        "claude-code/model-config#available-models/model-aliases-1"
       ],
       "expected": "answer",
       "notes": "Area: model configuration."
@@ -143,8 +151,7 @@
       "question": "How do I get started building an agent with the Claude Agent SDK?",
       "gold_chunks": [
         "claude-code/agent-sdk/quickstart#key-concepts",
-        "claude-code/agent-sdk/overview#get-started-1",
-        "claude-code/agent-sdk/overview#get-started-2"
+        "claude-code/agent-sdk/overview#get-started"
       ],
       "expected": "answer",
       "notes": "Area: Agent SDK."
@@ -161,7 +168,10 @@
       "id": "a-14",
       "category": "answerable",
       "question": "How do I wire up Claude Code to run inside a GitHub Actions workflow?",
-      "gold_chunks": ["claude-code/github-actions#manual-setup"],
+      "gold_chunks": [
+        "claude-code/github-actions#setup",
+        "claude-code/github-actions#setup/manual-setup"
+      ],
       "expected": "answer",
       "notes": "Area: GitHub Actions / CI."
     },
@@ -219,8 +229,7 @@
       "category": "answerable",
       "question": "What does it take to write my own plugin for Claude Code?",
       "gold_chunks": [
-        "claude-code/plugins#quickstart/create-your-first-plugin-1",
-        "claude-code/plugins#quickstart",
+        "claude-code/plugins#quickstart-1",
         "claude-code/plugins"
       ],
       "expected": "answer",

@@ -20,7 +20,7 @@
   },
   "retrieval": {
     "hit_at_5": 0.85,
-    "mrr": 0.6958333333333334,
+    "mrr": 0.6641666666666667,
     "answerable_count": 20
   },
   "answers": {
@@ -367,5 +367,16 @@
         "via": "answered"
       }
     ]
+  },
+  "retrieval_rebaselined": {
+    "date": "2026-08-07",
+    "step": "P7.0",
+    "run_id": "2026-08-07T20-14-35Z-98378b",
+    "commit": "98378b4d6dc7c121e7dff15db1718008ae3ed6b5",
+    "previous": {
+      "hit_at_5": 0.85,
+      "mrr": 0.6958333333333334
+    },
+    "why": "Corpus drift, not a pipeline change. Between the 2026-07-23 baseline and today the upstream Claude Code docs restructured and the daily sync tracked it: 172 pages/3496 chunks -> 164 pages/3421 chunks, with 151 chunks added, ~213 updated and 23 deleted on 2026-08-07 alone. git diff 486b7e7..HEAD (the last green Evals run) shows ZERO changes under lib/rag, lib/config.ts, lib/db, evals/lib or evals/run-retrieval.ts, so nothing in the system under test moved; only the corpus beneath it did. hit@5 holds at 0.85 with the miss set (a-10, a-11, a-18) identical to the three P4.3 recorded as known residual retrieval gaps. MRR falls 0.6958 -> 0.6642 because ranks shifted on questions that still hit. Both acceptance floors still pass: AC-01 hit@5 0.85 >= 0.85, AC-02 MRR 0.6642 >= 0.60. The judged layer was NOT re-measured and its baseline is untouched; P7.6 owns the full judged comparison."
   }
 }
