@@ -30,23 +30,42 @@
   display: flex;
   align-items: baseline;
   gap: 20px;
+  /* Wrap the nav to its own row rather than horizontal-scrolling the page when
+     the two do not fit side by side (§14: nothing scrolls at 320px). No
+     breakpoint: the row breaks exactly when it must. */
+  flex-wrap: wrap;
+  row-gap: 10px;
 }
 .wordmark {
   font-family: var(--font-serif);
   font-size: 19px;
   font-weight: 600;
   margin-right: auto;
+  /* The wordmark is one short authored string; it wraps as a block or not at
+     all, never into a four-line stack. */
+  white-space: nowrap;
 }
 .nav {
   display: flex;
   gap: 18px;
-  align-items: baseline;
+  /* Centered, not baselined: the controls now carry 24px A11Y-10 target boxes
+     of differing heights, and centering keeps their text optically on one
+     line. */
+  align-items: center;
   font-size: 13px;
+  flex-wrap: wrap;
+  row-gap: 8px;
 }
 .navLink {
   color: var(--accent);
   text-decoration: none;
   position: relative;
+  /* A11Y-10: 24px minimum pointer target. inline-flex gives the anchor a real
+     box to grow; the nav centers rather than baselines so the taller boxes
+     stay optically aligned. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
 }
 .navLink::after {
   content: "";
@@ -78,6 +97,10 @@
   padding: 2px 0;
   cursor: pointer;
   transition: color var(--t-fast);
+  /* A11Y-10: 24px minimum pointer target (was a 19px line box). */
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
 }
 .histBtn:hover,
 .histBtn:focus-visible {
@@ -199,6 +222,14 @@
     grid-template-columns: minmax(0, 660px);
   }
   .shell[data-pin="on"] .rail {
+    display: none;
+  }
+  /* The toggle governs the rail, and the rail cannot render below this width
+     (UX-11), nor does the receipt slim (§6.2). Showing a control that provably
+     does nothing is worse than omitting it, so it leaves the header here and
+     takes its 149px with it. Tier 3, Brandon-authorized at P7.0: UX-02's
+     "exactly five elements" now reads as five at >=1120px, four below. */
+  .pin {
     display: none;
   }
 }
