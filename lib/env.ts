@@ -38,6 +38,11 @@ const envSchema = z.object({
   // ENG-15). Optional with a localhost fallback so local/CI boot without it; set
   // it in Vercel at deploy (P8.1 env list). Distinct from PORTFOLIO_URL.
   SITE_URL: z.url("must be a valid URL").optional(),
+
+  // Vercel system variable (set automatically at build and runtime on Vercel,
+  // absent locally/CI). Lets metadataBase resolve to the production origin with
+  // no extra project env var; see app/layout.tsx.
+  VERCEL_ENV: z.enum(["production", "preview", "development"]).optional(),
 });
 
 export type Env = z.infer<typeof envSchema>;

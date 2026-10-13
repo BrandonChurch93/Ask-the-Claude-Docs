@@ -15,9 +15,14 @@ const SITE_NAME = "Ask the Claude Docs";
 const DESCRIPTION =
   "A RAG assistant over the Claude Code documentation. Every answer cites its sources; when the docs don't cover a question, it says so, with receipts.";
 
-// The site's own origin for canonical + OG/Twitter URLs; localhost until SITE_URL
-// is set in Vercel (P8.1). Distinct from PORTFOLIO_URL (the footer link).
-const siteUrl = env.SITE_URL ?? "http://localhost:3000";
+// The site's own origin for canonical + OG/Twitter URLs. SITE_URL overrides;
+// otherwise Vercel production builds use the production origin and everything
+// else (local dev, CI, previews) stays on localhost. Distinct from PORTFOLIO_URL
+// (the footer link).
+const PRODUCTION_URL = "https://ask-the-claude-docs.vercel.app";
+const siteUrl =
+  env.SITE_URL ??
+  (env.VERCEL_ENV === "production" ? PRODUCTION_URL : "http://localhost:3000");
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
